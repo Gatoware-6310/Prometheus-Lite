@@ -1,3 +1,4 @@
+
 `timescale 1ns/1ps
 
 module register_file_testbench;
@@ -6,9 +7,9 @@ module register_file_testbench;
     reg enable = 0;
     reg reset;
 
-    reg [2:0] read_register_a;
-    reg [2:0] read_register_b;
-    reg [2:0] write_register;
+    reg [1:0] read_register_a;
+    reg [1:0] read_register_b;
+    reg [1:0] write_register;
 
     reg [7:0] write_data;
 
@@ -37,7 +38,7 @@ initial begin
     write_register = 0;
     write_data = 100;
     read_register_a = 0;
-    read_register_b = 7;
+    read_register_b = 3;
 
     @(posedge clk);
     #1;
@@ -68,13 +69,13 @@ initial begin
     // Dual read test, tests reading two different registers at the same time
     @(negedge clk);
     enable = 1;
-    write_register = 5;
+    write_register = 2;
     write_data = 99;
 
     @(posedge clk);
     #1;
     read_register_a = 3;
-    read_register_b = 5;
+    read_register_b = 2;
     #1;
     $display("DUAL READ: A is %d, B is %d, expecting 42, 99", data_a, data_b);
 
