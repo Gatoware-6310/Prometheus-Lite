@@ -1,17 +1,23 @@
 /* Previously register.v, no longer unused! */
 
-module register(
+module program_counter(
     input wire clk,
     input wire reset,
-    input wire increment, // D
-    output reg[15:0] value // Q
+    input wire increment,
+    input wire jump,
+    input wire[15:0] jumpValue,
+    output reg[15:0] value
 );
 
 always @(posedge clk) begin
-    if(reset) begin
-        value <= 0;
-    end else if (increment) begin
-        value <= value + 3;
+        if(reset) begin // reset takes priority
+            value <= 0;
+        end else if(jump) begin // jumps take second priority
+            value <= jumpValue;
+        end else if (increment) begin // incrementing is last
+        if(value < 65533) begin
+            value <= value + 3;
+        end else value <= 0;
     end
 end
 
