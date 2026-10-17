@@ -1,0 +1,23 @@
+module alu(
+    input wire [7:0] a,
+    input wire [7:0] b,
+    input wire [7:0] opcode,
+    output reg [7:0] result
+);
+
+    always@(*) begin
+        case(opcode)
+            8'd0: result = a & b; /* AND: If the opcode is (decimal) 0, AND the two inputs */
+            8'd1: result = a | b; /* OR: If the opcode is (decimal) 1, OR the two inputs */
+            8'd2: result = a ^ b; /* XOR: If the opcode is (decimal) 2, XOR the two inputs */
+            8'd3: result = a + b; /* ADD: If the opcode is (decimal) 3, add the two inputs together. */
+            8'd4: result = a - b; /* SUB: If the opcode is (decimal) 4, subtract B from A. */
+            8'd5: result = a * b; /* MUL: If the opcode is (decimal) 5, multiply the two inputs together. */
+            // TO BE CONSIDERED LATER: 8'd6: result = a / b; /* DIV: If the opcode is (decimal) 6, perform division on the two inputs. A is the dividend, B is the divisor. */
+            // TO BE CONSIDERED LATER: 8'd7: result = a % b; /* MOD: If the opcode is (decimal) 7,  perform a modulus operation on the two inputs. */
+            default: result = 8'b0; /* Just set the result to 0 if it's an illegal/unrecognized opcode. */
+        endcase
+
+    end
+
+endmodule
