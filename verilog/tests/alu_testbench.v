@@ -13,7 +13,7 @@ module alu_testbench;
     );
 
     initial begin
-        integer i;
+        integer i; 
         a = 8'd100;
         b = 8'd23;
         opcode = 8'd0;
