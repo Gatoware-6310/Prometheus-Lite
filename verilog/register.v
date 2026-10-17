@@ -1,3 +1,5 @@
+/* Unused for now */
+
 module register(
     input wire clk,
     input wire reset,

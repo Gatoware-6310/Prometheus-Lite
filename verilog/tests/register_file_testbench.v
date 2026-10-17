@@ -13,7 +13,7 @@ module register_file_testbench;
     reg [7:0] write_data;
 
     wire [7:0] data_a;
-    // wire [7:0] data_b; 
+    wire [7:0] data_b; 
 
     always #5 clk = ~clk;
 
@@ -25,7 +25,8 @@ module register_file_testbench;
         .write_data(write_data),
         .enable(enable),
         .data_a(data_a),
-        .data_b(data_b)
+        .data_b(data_b),
+        .reset(reset)
     );
 
 

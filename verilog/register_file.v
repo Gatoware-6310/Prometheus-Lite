@@ -1,4 +1,4 @@
-module register_file (
+module register_file ( // Set up stuff
     input wire clk,
     input wire enable,
     input wire reset,
@@ -15,18 +15,18 @@ module register_file (
 
 reg [7:0] registers [0:7]; // an array of 8 8 bit `reg`s
 
-// combinational
+/* combinational reads i think */
 assign data_a = registers[read_register_a];
 assign data_b = registers[read_register_b];
 
 
-// on the clock edge thingy
+/* this happens on the high clock edge, resets all the registers if the input for that is true */
 always@(posedge clk) begin
-    if(reset) begin
+    if(reset) begin // reset takes priority
         for (integer i = 0; i < 8; i = i + 1) begin
             registers[i] <= 0;
         end
-    end else if(enable) begin
+    end else if(enable) begin // if we don't want to reset and we're writing, write.
         registers[write_register] <= write_data;
     end
 end
