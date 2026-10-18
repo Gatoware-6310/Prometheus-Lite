@@ -17,21 +17,17 @@ prometheus_lite dut(
 initial begin
     // Reset the cpu first
     reset = 1;
-    @(posedge clk);
-    #10;
+    @(negedge clk);
     reset = 0;
 
     // Set the instruction to movi a, 42
     instruction = 24'h00003F;
     ir_enable = 1;
-    @(posedge clk);
-    #10;
+    repeat(3) @(negedge clk);
     ir_enable = 0;
 
-    @(posedge clk);
-    #30;
-
-    $display("%d", dut.rf.registers[0]);
+    $display("%d, 63 expected", dut.rf.registers[0]);
+    $finish;
 
 end
 

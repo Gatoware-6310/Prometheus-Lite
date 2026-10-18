@@ -1,11 +1,12 @@
 /* TOP LEVEL */
 module prometheus_lite(
     input wire clk,
-    input wire reset
+    input wire reset,
+    input wire ir_enable,
+    input wire[23:0] instruction
 );
     /* IR stuff */
-    wire ir_enable;
-    wire instruction[23:0];
+
     wire[7:0] opcode;
     wire[7:0] operand_1;
     wire[7:0] operand_2;
@@ -28,7 +29,7 @@ module prometheus_lite(
         .instruction(instruction),
         .opcode(opcode),
         .operand_1(operand_1),
-        .operand_2(operand_2);
+        .operand_2(operand_2)
     );
 
     control_unit cu(
@@ -38,7 +39,7 @@ module prometheus_lite(
         .operand_2(operand_2),
         .write_register(write_register),
         .write_data(write_data),
-        .rf_write_enable(rf_write_enable);
+        .rf_write_enable(rf_write_enable)
     );
 
     register_file rf(

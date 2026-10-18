@@ -12,14 +12,14 @@ module control_unit (
 );
 
     always@(posedge clk) begin
+        rf_write_enable <= 0;
         case(opcode) 
-            8'h0: // MOVE IMMEDIATE, 0x0
+            8'h0: begin// MOVE IMMEDIATE, 0x0
                 rf_write_enable <= 1;
                 write_register <= operand_1[1:0]; // move the register number (lowest 2 bits since there's just 4 registers) from the first operand into the register that's gonna be written to 
                 write_data <= operand_2;
-            default:
+            end
         endcase
-        rf_write_enable <= 0;
     end
 
 endmodule
