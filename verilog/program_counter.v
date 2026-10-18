@@ -5,7 +5,7 @@ module program_counter(
     input wire reset,
     input wire increment,
     input wire jump,
-    input wire[15:0] jumpValue,
+    input wire[15:0] jump_value,
     output reg[15:0] value
 );
 
@@ -13,7 +13,7 @@ always @(posedge clk) begin
         if(reset) begin // reset takes priority
             value <= 0;
         end else if(jump) begin // jumps take second priority
-            value <= jumpValue;
+            value <= jump_value;
         end else if (increment) begin // incrementing is last
         if(value < 65533) begin
             value <= value + 3;

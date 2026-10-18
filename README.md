@@ -57,6 +57,10 @@ Register pairs are not additional storage, they are simply the value of two regi
 - Grows downward
 - Occupies `0x0000` to `0x00FF` in order to work with basically any memory limit
 
+**Instruction Register**
+
+- Takes in a 24 bit instruction, returns 3 bytes - the opcode, first operand, and second operand
+
 ## 3. Instruction encoding
 
 Every instruction occupies 3 bytes, even if it doesn't use all 3.
@@ -68,6 +72,10 @@ Every instruction occupies 3 bytes, even if it doesn't use all 3.
 | 2 | Operand 2 |
 
 Operands unused by the current instruction are ignored.
+
+Byte 0 is considered the first byte left to right, so in `AB CD EF`, the first byte would be `AB`.
+
+Similarly, in 111111110000000101010101, `11111111` would be the first byte, or opcode.
 
 ### Example encodings
 
@@ -280,7 +288,7 @@ mul a, b
 hlt
 ```
 
-`A` contains the low 8 bits of the product (120). `Z` is set if that result is zero, and `C` is set if the full product exceeds 255.
+`A` contains the result of the product (120). `Z` is set if that result is zero, and `C` is set if the result exceeds 255.
 
 ### Load from memory
 

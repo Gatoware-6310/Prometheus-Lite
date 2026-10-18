@@ -6,7 +6,7 @@ module program_counter_testbench;
     reg reset;
     reg increment;
     reg jump;
-    reg [15:0] jumpValue;
+    reg [15:0] jump_value;
 
     wire [15:0] value;
 
@@ -17,7 +17,7 @@ module program_counter_testbench;
         .reset(reset),
         .increment(increment),
         .jump(jump),
-        .jumpValue(jumpValue),
+        .jump_value(jump_value),
         .value(value)
     );
 
@@ -43,13 +43,13 @@ initial begin
 
     // Jump test
     jump = 1;
-    jumpValue = 100;
+    jump_value = 100;
     @(posedge clk);
     #10
     $display("PC: %d, 100 expected", value);
 
     // Overflow test
-    jumpValue = 65534;
+    jump_value = 65534;
     increment = 1;
     @(posedge clk);
     #10
