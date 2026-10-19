@@ -366,8 +366,11 @@ double:
 
 `A` contains 20 after the subroutine returns.
 
+## NOTES
+- Prometheus Lite is now a DUAL CYCLE CPU, with a FETCH and EXECUTE cycle. Fetch includes decoding the instruction and execute includes memory/register writeback, etc.
+
 ## The end!
 
 **Prometheus Lite ISA v1.0**
 
-Designed for a compact, high-frequency, 8-bit ASIC CPU.
+Designed for a compact, high frequency, 8 bit ASIC CPU.
