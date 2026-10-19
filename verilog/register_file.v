@@ -3,7 +3,7 @@ module register_file ( // Set up stuff
     input wire enable,
     input wire reset,
 
-    input wire[1:0] read_register_a,
+    input wire[1:0] read_register_a, // there's a and b so that we can do things like `add a, b`
     input wire[1:0] read_register_b,
     input wire[1:0] write_register,
 

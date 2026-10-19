@@ -2,7 +2,6 @@
 module prometheus_lite(
     input wire clk,
     input wire reset,
-    input wire ir_enable,
     input wire[23:0] instruction
 );
     /* IR stuff */
@@ -22,10 +21,15 @@ module prometheus_lite(
     wire[7:0] data_a;
     wire[7:0] data_b;
 
+    // State is either FETCH or EXECUTE, 1 bit
+    reg state;
+    localparam FETCH = 0; // im gonna add this local param stuff to the alu and cu and stuff maybe tomorrow, just learned about it
+    localparam EXECUTE = 1;
+
     instruction_register ir(
         .clk(clk),
         .reset(reset),
-        .enable(ir_enable),
+        .enable(state == FETCH),
         .instruction(instruction),
         .opcode(opcode),
         .operand_1(operand_1),
@@ -49,7 +53,7 @@ module prometheus_lite(
     register_file rf(
         .clk(clk),
         .reset(reset),
-        .enable(rf_write_enable),
+        .enable(rf_write_enable && state == EXECUTE),
         .read_register_a(read_register_a),
         .read_register_b(read_register_b),
         .write_register(write_register),
@@ -57,5 +61,13 @@ module prometheus_lite(
         .data_a(data_a),
         .data_b(data_b)
     );
+
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= FETCH;
+        end else begin
+            state = ~state; // i really hate how verilog makes it ~ instead of ! :(
+        end
+    end
 
 endmodule
