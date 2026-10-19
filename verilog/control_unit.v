@@ -29,6 +29,9 @@ module control_unit (
                 write_register = operand_1[1:0];
                 write_data = data_a;
             end
+            default: begin
+                // illegal instruction! maybe an exception register later?
+            end
         endcase
     end
 
