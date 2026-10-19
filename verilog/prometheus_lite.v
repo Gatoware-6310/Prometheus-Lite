@@ -39,7 +39,11 @@ module prometheus_lite(
         .operand_2(operand_2),
         .write_register(write_register),
         .write_data(write_data),
-        .rf_write_enable(rf_write_enable)
+        .rf_write_enable(rf_write_enable),
+        .read_register_a(read_register_a),
+        .read_register_b(read_register_b),
+        .data_a(data_a),
+        .data_b(data_b)
     );
 
     register_file rf(

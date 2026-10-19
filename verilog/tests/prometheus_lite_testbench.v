@@ -20,13 +20,21 @@ initial begin
     @(negedge clk);
     reset = 0;
 
-    // Set the instruction to movi a, 42
-    instruction = 24'h00003F;
+    // Set the instruction to movi b, 42
+    instruction = 24'h00013F;
     ir_enable = 1;
-    repeat(3) @(negedge clk);
+    repeat(2)@(negedge clk);
     ir_enable = 0;
 
-    $display("%d, 63 expected", dut.rf.registers[0]);
+    $display("MOVE IMMEDIATE (movi b, 63): %d, 63 expected", dut.rf.registers[1]);
+
+    // Set the instruction to movr a, b
+    instruction = 24'h010001;
+    ir_enable = 1;
+    repeat(2)@(negedge clk);
+    ir_enable = 0;
+
+    $display("MOVE BETWEEN REGISTERS (movr a, b): %d, 63 expected", dut.rf.registers[0]);
     $finish;
 
 end
