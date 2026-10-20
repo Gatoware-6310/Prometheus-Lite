@@ -30,6 +30,7 @@ module prometheus_lite(
     // State can be 5 things, so ceil(log2(5)) = 3
     // i swear discovered that formula myself btw anyone else reading this be proud of me (even though it's very obvious)
     reg[2:0] state;
+    reg[2:0] next_state;
 
     localparam FETCH_A = 0;
     localparam FETCH_B = 1;
@@ -106,7 +107,10 @@ module prometheus_lite(
                     // TODO: shiny ditto
                     state <= EXECUTE;
                 EXECUTE:
-                    state <= WRITEBACK;
+                    if (next_state != state)
+                        state <= next_state;
+                    else
+                        state <= WRITEBACK;
                 WRITEBACK:
                     state <= REGISTER_WRITEBACK;
                 REGISTER_WRITEBACK:
