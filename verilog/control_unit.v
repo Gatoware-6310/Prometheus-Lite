@@ -52,7 +52,7 @@ module control_unit (
 
         next_state = state;
 
-        case(opcode) //TODO: use localparam
+        case(opcode)
             MOVI: begin // MOVE IMMEDIATE, 0x0, movi [reg], [immediate]
                 rf_write_enable = 1;
                 write_register = operand_1[1:0]; // move the register number (lowest 2 bits since there's just 4 registers) from the first operand into the register that's gonna be written to 
