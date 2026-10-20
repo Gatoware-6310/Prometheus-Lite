@@ -44,10 +44,15 @@ initial begin
     dut.ram.memory[7] = 8'h01;
     dut.ram.memory[8] = 8'h00;
 
+    // Set the instruction to movi a, 63
+    dut.ram.memory[9] = 8'h00;
+    dut.ram.memory[10] = 8'h00;
+    dut.ram.memory[11] = 8'h3F;
+
     // Set the instruction to movfa 0x200
-    dut.ram.memory[9] = 8'h06;
-    dut.ram.memory[10] = 8'h02;
-    dut.ram.memory[11] = 8'h00;
+    dut.ram.memory[12] = 8'h06;
+    dut.ram.memory[13] = 8'h02;
+    dut.ram.memory[14] = 8'h00;
 
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
@@ -76,15 +81,12 @@ initial begin
         $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE MEMORY INTO REGISTER %d, [FAIL]", dut.rf.registers[0]);
 
-    wait(dut.value_pc == 12);
+    wait(dut.value_pc == 15);
     @(negedge clk)
-    if(dut.ram.memory[512] == 255)
+    if(dut.ram.memory[512] == 63)
         $display("MOVE BYTE FROM REGISTER INTO MEMORY %d, [PASS]", dut.ram.memory[512]);
     else
         $fatal(1, "MOVE BYTE FROM REGISTER INTO MEMORY %d, [FAIL]", dut.ram.memory[512]);
-
-
-
 
     $display("");
     $finish;

@@ -103,6 +103,25 @@ module control_unit (
                 read_register_a = 0;
                 memory_address = {operand_1[2:0], operand_2};
                 memory_write_data = data_a;
+                // next state is already 5, writeback. this is what we need because we're writing to memory and we set it up here!
+            end
+            MOVFB: begin
+                memory_write_enable = 1;
+                read_register_a = 1;
+                memory_address = {operand_1[2:0], operand_2};
+                memory_write_data = data_a;
+            end
+            MOVFC: begin
+                memory_write_enable = 1;
+                read_register_a = 2;
+                memory_address = {operand_1[2:0], operand_2};
+                memory_write_data = data_a;
+            end
+            MOVFD: begin
+                memory_write_enable = 1;
+                read_register_a = 3;
+                memory_address = {operand_1[2:0], operand_2};
+                memory_write_data = data_a;
             end
             default: begin
                 // illegal instruction! maybe an exception register later?
