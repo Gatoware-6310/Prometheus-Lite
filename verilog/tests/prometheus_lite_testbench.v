@@ -1,7 +1,6 @@
 `timescale 1ns/1ps
 `define WAIT \ 
-    repeat(2) @(negedge clk); // we wait for the falling edge TWICE because the cpu does its work on the rising edge, and it has to FETCH and EXECUTE, taking 2 cycles.
-
+    repeat(5) @(negedge clk); // we wait for the falling edge 5 TIMES because the cpu does its work on the rising edge, and it has to do 5 cyces of work.
 module prometheus_lite_testbench;
 
 reg clk = 0;
@@ -39,6 +38,16 @@ initial begin
     if(dut.rf.registers[0] == 63)
         $display("MOVE REGISTERS %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE REGISTERS %d, [FAIL]", dut.rf.registers[0]);
+
+    // put a number into the memory address, i think address 0x000
+    dut.ram.memory[0] = 255;
+
+    instruction = 24'h030000; // set the instruction to mova 0x000
+    `WAIT
+    if(dut.rf.registers[0] == 255)
+        $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);
+    else $fatal(1, "MOVE MEMORY INTO REGISTER %d, [FAIL]", dut.rf.registers[0]);
+
     $finish;
 
     $display("");

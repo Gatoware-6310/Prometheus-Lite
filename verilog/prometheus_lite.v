@@ -5,7 +5,6 @@ module prometheus_lite(
     input wire[23:0] instruction
 );
     /* IR stuff */
-
     wire[7:0] opcode;
     wire[7:0] operand_1;
     wire[7:0] operand_2;
@@ -28,15 +27,21 @@ module prometheus_lite(
     wire[7:0] memory_write_data;
     wire[7:0] memory_read_data;
 
-    // State is either FETCH or EXECUTE, 1 bit
-    reg state;
-    localparam FETCH = 0; // im gonna add this local param stuff to the alu and cu and stuff maybe tomorrow, just learned about it
-    localparam EXECUTE = 1;
+    // State can be 5 things, so ceil(log2(5)) = 3
+    // i swear discovered that formula myself btw anyone else reading this be proud of me (even though it's very obvious)
+    reg[2:0] state;
+
+    localparam FETCH_A = 0;
+    localparam FETCH_B = 1;
+    localparam FETCH_C = 2;
+    localparam EXECUTE = 3;
+    localparam WRITEBACK = 4;
+
 
     memory ram(
       .clk(clk),
       .memory_read_enable(memory_read_enable),
-      .memory_write_enable(memory_write_enable),
+      .memory_write_enable(memory_write_enable && state == WRITEBACK), // && writeback just to be safe
       .address(memory_address),
       .write_data(memory_write_data),
       .read_data(memory_read_data)  
@@ -45,7 +50,7 @@ module prometheus_lite(
     instruction_register ir(
         .clk(clk),
         .reset(reset),
-        .enable(state == FETCH),
+        .enable(state == FETCH_A || state == FETCH_B || state == FETCH_C),
         .instruction(instruction),
         .opcode(opcode),
         .operand_1(operand_1),
@@ -54,6 +59,7 @@ module prometheus_lite(
 
     control_unit cu(
         .clk(clk),
+        .enable(state == EXECUTE),
         .opcode(opcode),
         .operand_1(operand_1),
         .operand_2(operand_2),
@@ -83,11 +89,29 @@ module prometheus_lite(
         .data_b(data_b)
     );
 
+    /* STATE MACHINE: Changes the current state *on every rising clock edge thingy!!!!* */
     always @(posedge clk) begin
         if (reset) begin
-            state <= FETCH;
+            state <= FETCH_A;
         end else begin
-            state = ~state; // i really hate how verilog makes it ~ instead of ! :(
+            case(state)
+                FETCH_A:
+                    // TODO: Fetch from the program counter
+                    state <= FETCH_B;
+                FETCH_B:
+                    // TODO: ditto
+                    state <= FETCH_C;
+                FETCH_C:
+                    // TODO: shiny ditto
+                    state <= EXECUTE;
+                EXECUTE:
+                    state <= WRITEBACK;
+                WRITEBACK:
+                    state <= FETCH_A;
+                default:
+                    // illegal state?? how did you even get here
+                    state <= FETCH_A;
+            endcase
         end
     end
 
