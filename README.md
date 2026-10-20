@@ -181,8 +181,8 @@ Used for unsigned multi-byte operations;
 | `0x07` | `movfb address` | *Move from* B into memory |
 | `0x08` | `movfc address` | *Move from* C into memory |
 | `0x09` | `movfd address` | *Move from* D into memory |
-| `0x0A` | `ldi destination, pair` | Load memory through register pair |
-| `0x0B` | `sti pair, source` | Store memory through register pair |
+| `0x0A` | `movp destination, pair` | Move memory into the destination register from the pointer in the register pair |
+| `0x0B` | `movfp pair, source` | Store the value of a register into the pointer in the register pair |
 
 For example;
 
@@ -190,7 +190,7 @@ For example;
 
 And;
 
-`ldi c, ab` loads the byte at the address held in AB into C, `sti ab, c` stores C at the address held in AB.
+`movp c, ab` loads the byte at the address held in AB into C, `movfp ab, c` stores C at the address held in AB.
 
 ### 5.2 Arithmetic
 
@@ -304,7 +304,7 @@ mova 0x1234
 movi a, 0x40
 movi b, 0x80
 
-ldi c, ab
+movp c, ab
 ```
 
 `C` receives the byte stored at address `0x4080`.
