@@ -16,6 +16,14 @@ prometheus_lite dut(
     .instruction(instruction)
 );
 
+/*
+always @(posedge clk) begin // FOR HEAVIER DEBUGGING
+    if (!reset)
+        $display("State: %d, Next State: %d, Current: %0xh",
+                 $time, dut.state, dut.next_state, dut.opcode);
+end
+*/
+
 initial begin
     $display("--------- Resetting the CPU ---------\n");
     // Reset the cpu first
@@ -47,7 +55,7 @@ initial begin
     if(dut.rf.registers[0] == 255)
         $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE MEMORY INTO REGISTER %d, [FAIL]", dut.rf.registers[0]);
-
+    `WAIT
     $finish;
 
     $display("");
