@@ -12,8 +12,7 @@ always #5 clk = ~clk;
 
 prometheus_lite dut(
     .clk(clk),
-    .reset(reset),
-    .instruction(instruction)
+    .reset(reset)
 );
 
 /*
@@ -34,14 +33,18 @@ initial begin
 
     $display("--------- Instruction tests ---------\n");
     // Set the instruction to movi b, 42
-    instruction = 24'h00013F;
+    dut.ram.memory[0] = 8'h00;
+    dut.ram.memory[1] = 8'h01;
+    dut.ram.memory[2] = 8'h3F;
     `WAIT
     if(dut.rf.registers[1] == 63) 
         $display("MOVE IMMEDIATE %d, [PASS]", dut.rf.registers[1]);
     else $fatal(1, "MOVE IMMEDIATE %d, [FAIL]", dut.rf.registers[1]);
 
     // Set the instruction to movr a, b
-    instruction = 24'h010001;
+    dut.ram.memory[3] = 8'h01;
+    dut.ram.memory[4] = 8'h00;
+    dut.ram.memory[5] = 8'h01;
     `WAIT
     if(dut.rf.registers[0] == 63)
         $display("MOVE REGISTERS %d, [PASS]", dut.rf.registers[0]);

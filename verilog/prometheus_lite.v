@@ -31,25 +31,11 @@ module prometheus_lite(
     wire [7:0] cu_memory_write_data;
 
     /* Shared RAM signals */
+    wire [7:0] memory_read_data;
     wire [10:0] memory_address;
     wire memory_read_enable;
     wire memory_write_enable;
     wire [7:0] memory_write_data;
-
-
-    wire fetching = (state <= FETCH_C_WAIT);
-
-    assign memory_address =
-        fetching ? ((state == FETCH_A) ? value_pc : fetch_address)
-                : cu_memory_address;
-
-    assign memory_read_enable =
-        fetching ? fetch_read_enable : cu_memory_read_enable;
-
-    assign memory_write_enable =
-        !fetching && (state == WRITEBACK) && cu_memory_write_enable;
-
-    assign memory_write_data = cu_memory_write_data;
 
     /* Program Counter stuff */
     wire jump_pc = 0;
@@ -69,7 +55,20 @@ module prometheus_lite(
     localparam WRITEBACK = 5;
     localparam REGISTER_WRITEBACK = 6;
 
+    wire fetching = (state <= FETCH_C_WAIT);
 
+    assign memory_address =
+        fetching ? ((state == FETCH_A) ? value_pc : fetch_address)
+                : cu_memory_address;
+
+    assign memory_read_enable =
+        fetching ? fetch_read_enable : cu_memory_read_enable;
+
+    assign memory_write_enable =
+        !fetching && (state == WRITEBACK) && cu_memory_write_enable;
+
+    assign memory_write_data = cu_memory_write_data;
+    
     memory ram(
       .clk(clk),
       .memory_read_enable(memory_read_enable),
