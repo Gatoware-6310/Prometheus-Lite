@@ -29,14 +29,14 @@ initial begin
     // Reset the cpu first
     reset = 1;
 
-    // Set the instruction to movi b, 42
+    // Set the instruction to movi b, 63
     dut.ram.memory[0] = 8'h00;
     dut.ram.memory[1] = 8'h01;
     dut.ram.memory[2] = 8'h3F;
 
-    // Set the instruction to movr a, b
+    // Set the instruction to movr c, b
     dut.ram.memory[3] = 8'h01;
-    dut.ram.memory[4] = 8'h00;
+    dut.ram.memory[4] = 8'h02;
     dut.ram.memory[5] = 8'h01;
 
     // Set the instruction to mova 0x100
@@ -44,7 +44,12 @@ initial begin
     dut.ram.memory[7] = 8'h01;
     dut.ram.memory[8] = 8'h00;
 
-    // put a number into the memory address, i think address 0x000
+    // Set the instruction to movfa 0x200
+    dut.ram.memory[9] = 8'h06;
+    dut.ram.memory[10] = 8'h02;
+    dut.ram.memory[11] = 8'h00;
+
+    // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
 
     `WAIT
@@ -53,23 +58,33 @@ initial begin
 
     $display("--------- Instruction tests ---------\n");
 
-    wait(dut.value_pc == 3);
-    @(negedge clk);
+    wait(dut.value_pc == 3); // wait until we're done executing that instruction
+    @(negedge clk); // wait until the work is done for sure
     if(dut.rf.registers[1] == 63)
         $display("MOVE IMMEDIATE %d, [PASS]", dut.rf.registers[1]);
     else $fatal(1, "MOVE IMMEDIATE %d, [FAIL]", dut.rf.registers[1]);
 
     wait(dut.value_pc == 6);
     @(negedge clk);
-    if(dut.rf.registers[0] == 63)
-        $display("MOVE REGISTERS %d, [PASS]", dut.rf.registers[0]);
-    else $fatal(1, "MOVE REGISTERS %d, [FAIL]", dut.rf.registers[0]);
+    if(dut.rf.registers[2] == 63)
+        $display("MOVE REGISTERS %d, [PASS]", dut.rf.registers[2]);
+    else $fatal(1, "MOVE REGISTERS %d, [FAIL]", dut.rf.registers[2]);
 
     wait(dut.value_pc == 9);
     @(negedge clk);
     if(dut.rf.registers[0] == 255)
         $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE MEMORY INTO REGISTER %d, [FAIL]", dut.rf.registers[0]);
+
+    wait(dut.value_pc == 12);
+    @(negedge clk)
+    if(dut.ram.memory[512] == 255)
+        $display("MOVE BYTE FROM REGISTER INTO MEMORY %d, [PASS]", dut.ram.memory[512]);
+    else
+        $fatal(1, "MOVE BYTE FROM REGISTER INTO MEMORY %d, [FAIL]", dut.ram.memory[512]);
+
+
+
 
     $display("");
     $finish;
