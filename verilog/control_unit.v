@@ -24,7 +24,6 @@ module control_unit (
 
     always@(*) begin
         rf_write_enable = 0;
-        rf_write_enable = 0;
         memory_read_enable = 0;
         memory_write_enable = 0;
 
