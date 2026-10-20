@@ -64,7 +64,7 @@ module prometheus_lite(
         .read_register_b(read_register_b),
         .data_a(data_a),
         .data_b(data_b),
-        .memory_read_enable(memory_write_enable),
+        .memory_read_enable(memory_read_enable),
         .memory_write_enable(memory_write_enable),
         .memory_address(memory_address),
         .memory_write_data(memory_write_data),

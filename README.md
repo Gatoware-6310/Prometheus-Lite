@@ -8,7 +8,7 @@ A smaller, less ambitious 8 bit version of my Prometheus CPU.
 Prometheus Lite will have:
 
 - An 8 bit data width
-- 16 bit address space (byte addressed)
+- 11 bit address space (byte addressed)
 - Fixed 24 bit (3 byte) instruction width
 - 4 general purpose registers (A, B, C, and D)
 - 2 register pairs for pointers and 16 bit values (AB and CD)
@@ -48,7 +48,7 @@ Register pairs are not additional storage, they are simply the value of two regi
 - Contains the address of the current instruction
 - Advances by 3 bytes
 - Can be modified by jumps of any kind
-- 16 bit!
+- 11 bit!
 
 **Stack Pointer**
 
