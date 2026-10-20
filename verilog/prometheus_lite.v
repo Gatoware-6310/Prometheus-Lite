@@ -1,4 +1,3 @@
-
 /* TOP LEVEL */
 module prometheus_lite(
     input wire clk,
@@ -60,15 +59,16 @@ module prometheus_lite(
 
     assign memory_address =
         fetching ? ((state == FETCH_A) ? value_pc : fetch_address)
-                : cu_memory_address;
+                : cu_memory_address; // first multiplexer! if we're fetching, then if it's the first state (fetch_A), the address should be the vaule of the program counter, or if it's not the first state it should be the value of the fetch address. if we're NOT fetching, set it to the value that the control unit wants it to be
+
 
     assign memory_read_enable =
-        fetching ? fetch_read_enable : cu_memory_read_enable;
+        fetching ? fetch_read_enable : cu_memory_read_enable; // if we're fetching, fetch if read enable is true, otherwise follow the cu
 
     assign memory_write_enable =
-        !fetching && (state == WRITEBACK) && cu_memory_write_enable;
+        !fetching && (state == WRITEBACK || state == EXECUTE) && cu_memory_write_enable; // only enable writes if we're not fetching, the state is writeback, and the cu wants to write.
 
-    assign memory_write_data = cu_memory_write_data;
+    assign memory_write_data = cu_memory_write_data; // just make it what the cu wants
     
     memory ram(
       .clk(clk),
