@@ -76,7 +76,9 @@ module prometheus_lite(
         .memory_write_enable(memory_write_enable),
         .memory_address(memory_address),
         .memory_write_data(memory_write_data),
-        .memory_read_data(memory_read_data)
+        .memory_read_data(memory_read_data),
+        .state(state),
+        .next_state(next_state)
     );
 
     register_file rf(

@@ -67,6 +67,7 @@ module control_unit (
                 memory_read_enable = 1;
                 memory_address = {operand_1[2:0], operand_2};
                 write_register = 1; // b
+                rf_write_enable = 1;
                 write_data = memory_read_data;
                 next_state = 5;
             end
@@ -74,6 +75,7 @@ module control_unit (
                 memory_read_enable = 1;
                 memory_address = {operand_1[2:0], operand_2};
                 write_register = 2; // c
+                rf_write_enable = 1;
                 write_data = memory_read_data;
                 next_state = 5;
             end
@@ -81,6 +83,7 @@ module control_unit (
                 memory_read_enable = 1;
                 memory_address = {operand_1[2:0], operand_2};
                 write_register = 3; // d
+                rf_write_enable = 1;
                 write_data = memory_read_data;
                 next_state = 5;
             end
