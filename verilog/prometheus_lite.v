@@ -21,10 +21,26 @@ module prometheus_lite(
     wire[7:0] data_a;
     wire[7:0] data_b;
 
+    /* Memory stuff */
+    wire memory_read_enable;
+    wire memory_write_enable;
+    wire[10:0] memory_address;
+    wire[7:0] memory_write_data;
+    wire[7:0] memory_read_data;
+
     // State is either FETCH or EXECUTE, 1 bit
     reg state;
     localparam FETCH = 0; // im gonna add this local param stuff to the alu and cu and stuff maybe tomorrow, just learned about it
     localparam EXECUTE = 1;
+
+    memory ram(
+      .clk(clk),
+      .memory_read_enable(memory_read_enable),
+      .memory_write_enable(memory_write_enable),
+      .address(memory_address),
+      .write_data(memory_write_data),
+      .read_data(memory_read_data)  
+    );
 
     instruction_register ir(
         .clk(clk),

@@ -17,11 +17,14 @@ prometheus_lite dut(
 );
 
 initial begin
+    $display("--------- Resetting the CPU ---------\n");
     // Reset the cpu first
     reset = 1;
     `WAIT
     reset = 0;
+    $display("--------- Successful! Probably ---------\n");
 
+    $display("--------- Instruction tests ---------\n");
     // Set the instruction to movi b, 42
     instruction = 24'h00013F;
     `WAIT
@@ -36,6 +39,8 @@ initial begin
         $display("MOVE REGISTERS %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE REGISTERS %d, [FAIL]", dut.rf.registers[0]);
     $finish;
+
+    $display("");
 
 end
 
