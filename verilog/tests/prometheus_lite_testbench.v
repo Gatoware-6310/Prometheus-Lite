@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 `define WAIT \ 
-    repeat(6) @(negedge clk); // we wait for the falling edge 6 TIMES because the cpu does its work on the rising edge, and it has to do 6 cyces of work.
+    repeat(7) @(negedge clk); // we wait for the falling edge 7 TIMES because the cpu does its work on the rising edge, and it has to do 7 cyces of work.
 module prometheus_lite_testbench;
 
 reg clk = 0;

@@ -5,8 +5,8 @@ module program_counter(
     input wire reset,
     input wire increment,
     input wire jump,
-    input wire[11:0] jump_value,
-    output reg[11:0] value
+    input wire[10:0] jump_value,
+    output reg[10:0] value
 );
 
 always @(posedge clk) begin

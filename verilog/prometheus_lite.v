@@ -1,13 +1,13 @@
 /* TOP LEVEL */
 module prometheus_lite(
     input wire clk,
-    input wire reset,
-    input wire[23:0] instruction
+    input wire reset
 );
     /* IR stuff */
     wire[7:0] opcode;
     wire[7:0] operand_1;
     wire[7:0] operand_2;
+    reg[23:0] instruction;
 
     /* Control Unit stuff/Register File stuff */
     wire rf_write_enable;
@@ -20,12 +20,41 @@ module prometheus_lite(
     wire[7:0] data_a;
     wire[7:0] data_b;
 
-    /* Memory stuff */
+    /* Fetch signals */
+    reg [10:0] fetch_address;
+    reg fetch_read_enable;
+
+    /* Control unit signals */
+    wire [10:0] cu_memory_address;
+    wire cu_memory_read_enable;
+    wire cu_memory_write_enable;
+    wire [7:0] cu_memory_write_data;
+
+    /* Shared RAM signals */
+    wire [10:0] memory_address;
     wire memory_read_enable;
     wire memory_write_enable;
-    wire[10:0] memory_address;
-    wire[7:0] memory_write_data;
-    wire[7:0] memory_read_data;
+    wire [7:0] memory_write_data;
+
+
+    wire fetching = (state <= FETCH_C_WAIT);
+
+    assign memory_address =
+        fetching ? fetch_address : cu_memory_address;
+
+    assign memory_read_enable =
+        fetching ? fetch_read_enable : cu_memory_read_enable;
+
+    assign memory_write_enable =
+        !fetching && (state == WRITEBACK) && cu_memory_write_enable;
+
+    assign memory_write_data = cu_memory_write_data;
+
+    /* Program Counter stuff */
+    wire increment_pc;
+    wire jump_pc;
+    wire[10:0] jump_value_pc;
+    wire[10:0] value_pc;
 
     // State can be 5 things, so ceil(log2(5)) = 3
     // i swear discovered that formula myself btw anyone else reading this be proud of me (even though it's very obvious)
@@ -35,9 +64,10 @@ module prometheus_lite(
     localparam FETCH_A = 0;
     localparam FETCH_B = 1;
     localparam FETCH_C = 2;
-    localparam EXECUTE = 3;
-    localparam WRITEBACK = 4;
-    localparam REGISTER_WRITEBACK = 5;
+    localparam FETCH_C_WAIT = 3;
+    localparam EXECUTE = 4;
+    localparam WRITEBACK = 5;
+    localparam REGISTER_WRITEBACK = 6;
 
 
     memory ram(
@@ -72,10 +102,10 @@ module prometheus_lite(
         .read_register_b(read_register_b),
         .data_a(data_a),
         .data_b(data_b),
-        .memory_read_enable(memory_read_enable),
-        .memory_write_enable(memory_write_enable),
-        .memory_address(memory_address),
-        .memory_write_data(memory_write_data),
+        .memory_read_enable(cu_memory_read_enable),
+        .memory_write_enable(cu_memory_write_enable),
+        .memory_address(cu_memory_address),
+        .memory_write_data(cu_memory_write_data),
         .memory_read_data(memory_read_data),
         .state(state),
         .next_state(next_state)
@@ -93,21 +123,40 @@ module prometheus_lite(
         .data_b(data_b)
     );
 
+    program_counter pc(
+        .clk(clk),
+        .reset(reset),
+        .increment(state == REGISTER_WRITEBACK), // increment on register writeback aswell? i hope this works
+        .jump(jump_pc),
+        .jump_value(jump_value_pc),
+        .value(value_pc)
+    );
+
     /* STATE MACHINE: Changes the current state *on every rising clock edge thingy!!!!* */
     always @(posedge clk) begin
         if (reset) begin
             state <= FETCH_A;
         end else begin
             case(state)
-                FETCH_A:
-                    // TODO: Fetch from the program counter
-                    state <= FETCH_B;
-                FETCH_B:
-                    // TODO: ditto
-                    state <= FETCH_C;
-                FETCH_C:
-                    // TODO: shiny ditto
-                    state <= EXECUTE;
+                FETCH_A: begin
+                        fetch_address <= value_pc;
+                        fetch_read_enable <= 1;
+                        state <= FETCH_B; 
+                    end
+                FETCH_B: begin
+                        instruction[7:0] <= memory_read_data;
+                        fetch_address <= value_pc + 1;
+                        state <= FETCH_C;
+                    end
+                FETCH_C: begin
+                        instruction[15:8] <= memory_read_data;
+                        fetch_address <= value_pc + 2;
+                        state <= FETCH_C_WAIT;
+                    end
+                FETCH_C_WAIT: begin
+                        instruction[23:16] <= memory_read_data;
+                        state <= EXECUTE;
+                    end
                 EXECUTE:
                     if (next_state != state)
                         state <= next_state;

@@ -367,7 +367,7 @@ double:
 `A` contains 20 after the subroutine returns.
 
 ## NOTES
-- Prometheus Lite is now a multi cycle CPU, with FETCH_A, FETCH_B, FETCH_C, EXECUTE, WRITEBACK, and REGISTER_WRITEBACK cycles
+- Prometheus Lite is now a multi cycle CPU, with FETCH_A, FETCH_B, FETCH_C, FETCH_C_WAIT, EXECUTE, WRITEBACK, and REGISTER_WRITEBACK cycles
 - Instructions that read memory and write to registers will read from memory first (on the EXECUTE cycle), then write during the REGISTER_WRITEBACK cycle. Otherwise, they can write during EXECUTE. Similar story with WRITEBACK (memory writeback). This depends on instruction implementation!
 ## The end!
 
