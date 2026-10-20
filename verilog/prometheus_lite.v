@@ -1,3 +1,4 @@
+
 /* TOP LEVEL */
 module prometheus_lite(
     input wire clk,
@@ -82,7 +83,7 @@ module prometheus_lite(
         .clk(clk),
         .reset(reset),
         .enable(state == FETCH_C_WAIT),
-        .instruction(instruction),
+        .instruction({instruction[23:8], memory_read_data}),
         .opcode(opcode),
         .operand_1(operand_1),
         .operand_2(operand_2)
@@ -113,7 +114,7 @@ module prometheus_lite(
     register_file rf(
         .clk(clk),
         .reset(reset),
-        .enable(rf_write_enable && state == EXECUTE || rf_write_enable && state == REGISTER_WRITEBACK),
+        .enable(rf_write_enable && state == REGISTER_WRITEBACK),
         .read_register_a(read_register_a),
         .read_register_b(read_register_b),
         .write_register(write_register),
@@ -135,21 +136,22 @@ module prometheus_lite(
     always @(posedge clk) begin
         if (reset) begin
             state <= FETCH_A;
+            fetch_address <= 0;
+            fetch_read_enable <= 1;
         end else begin
             case(state)
                 FETCH_A: begin
-                        fetch_address <= value_pc;
+                        fetch_address <= value_pc + 1;
                         fetch_read_enable <= 1;
                         state <= FETCH_B; 
                     end
                 FETCH_B: begin
                         instruction[23:16] <= memory_read_data;
-                        fetch_address <= value_pc + 1;
+                        fetch_address <= value_pc + 2;
                         state <= FETCH_C;
                     end
                 FETCH_C: begin
                         instruction[15:8] <= memory_read_data;
-                        fetch_address <= value_pc + 2;
                         state <= FETCH_C_WAIT;
                     end
                 FETCH_C_WAIT: begin
@@ -157,7 +159,9 @@ module prometheus_lite(
                         state <= EXECUTE;
                     end
                 EXECUTE:
-                    if (next_state != state)
+                    if (next_state == FETCH_A)
+                        state <= REGISTER_WRITEBACK;
+                    else if (next_state != state)
                         state <= next_state;
                     else
                         state <= WRITEBACK;
