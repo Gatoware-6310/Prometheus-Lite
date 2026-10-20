@@ -36,11 +36,12 @@ module control_unit (
 
         memory_address = 0;
         memory_write_data = 0;
-        case(opcode) //TODO: use local param
+        case(opcode) //TODO: use localparam, implement jumping states within this cu
             8'h0: begin // MOVE IMMEDIATE, 0x0, movi [reg], [immediate]
                 rf_write_enable = 1;
                 write_register = operand_1[1:0]; // move the register number (lowest 2 bits since there's just 4 registers) from the first operand into the register that's gonna be written to 
                 write_data = operand_2;
+                // SHOULD JUMP TO FETCH_A
             end
             8'h01: begin
                 rf_write_enable = 1;
@@ -52,6 +53,7 @@ module control_unit (
                 memory_read_enable = 1;
                 memory_address = {operand_1[2:0], operand_2};
                 write_register = 0; // set it to a
+                rf_write_enable = 1;
                 write_data = memory_read_data; // concatenate the last 3 bits of operand 2 onto operand 1
             end
             8'h03: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movb [address]
