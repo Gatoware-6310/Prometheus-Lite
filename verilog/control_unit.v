@@ -46,7 +46,7 @@ module control_unit (
                 rf_write_enable = 1;
                 write_register = operand_1[1:0]; // move the register number (lowest 2 bits since there's just 4 registers) from the first operand into the register that's gonna be written to 
                 write_data = operand_2;
-                next_state = 0;
+                next_state = 6;
             end
             8'h01: begin
                 rf_write_enable = 1;
@@ -61,7 +61,7 @@ module control_unit (
                 write_register = 0; // set it to a
                 rf_write_enable = 1;
                 write_data = memory_read_data; // concatenate the last 3 bits of operand 2 onto operand 1
-                next_state = 5;
+                next_state = 6;
             end
             8'h03: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movb [address]
                 memory_read_enable = 1;
@@ -69,7 +69,7 @@ module control_unit (
                 write_register = 1; // b
                 rf_write_enable = 1;
                 write_data = memory_read_data;
-                next_state = 5;
+                next_state = 6;
             end
             8'h04: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movc [address]
                 memory_read_enable = 1;
@@ -77,7 +77,7 @@ module control_unit (
                 write_register = 2; // c
                 rf_write_enable = 1;
                 write_data = memory_read_data;
-                next_state = 5;
+                next_state = 6;
             end
             8'h05: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movd [address]
                 memory_read_enable = 1;
@@ -85,7 +85,7 @@ module control_unit (
                 write_register = 3; // d
                 rf_write_enable = 1;
                 write_data = memory_read_data;
-                next_state = 5;
+                next_state = 6;
             end
             default: begin
                 // illegal instruction! maybe an exception register later?

@@ -40,7 +40,8 @@ module prometheus_lite(
     wire fetching = (state <= FETCH_C_WAIT);
 
     assign memory_address =
-        fetching ? fetch_address : cu_memory_address;
+        fetching ? ((state == FETCH_A) ? value_pc : fetch_address)
+                : cu_memory_address;
 
     assign memory_read_enable =
         fetching ? fetch_read_enable : cu_memory_read_enable;
@@ -51,9 +52,8 @@ module prometheus_lite(
     assign memory_write_data = cu_memory_write_data;
 
     /* Program Counter stuff */
-    wire increment_pc;
-    wire jump_pc;
-    wire[10:0] jump_value_pc;
+    wire jump_pc = 0;
+    wire[10:0] jump_value_pc = 0;
     wire[10:0] value_pc;
 
     // State can be 5 things, so ceil(log2(5)) = 3
@@ -82,7 +82,7 @@ module prometheus_lite(
     instruction_register ir(
         .clk(clk),
         .reset(reset),
-        .enable(state == FETCH_A || state == FETCH_B || state == FETCH_C),
+        .enable(state == FETCH_C_WAIT),
         .instruction(instruction),
         .opcode(opcode),
         .operand_1(operand_1),
@@ -144,7 +144,7 @@ module prometheus_lite(
                         state <= FETCH_B; 
                     end
                 FETCH_B: begin
-                        instruction[7:0] <= memory_read_data;
+                        instruction[23:16] <= memory_read_data;
                         fetch_address <= value_pc + 1;
                         state <= FETCH_C;
                     end
@@ -154,7 +154,7 @@ module prometheus_lite(
                         state <= FETCH_C_WAIT;
                     end
                 FETCH_C_WAIT: begin
-                        instruction[23:16] <= memory_read_data;
+                        instruction[7:0] <= memory_read_data;
                         state <= EXECUTE;
                     end
                 EXECUTE:

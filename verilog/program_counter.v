@@ -15,7 +15,7 @@ always @(posedge clk) begin
         end else if(jump) begin // jumps take second priority
             value <= jump_value;
         end else if (increment) begin // incrementing is last
-        if(value < 65533) begin
+        if(value < 2045) begin
             value <= value + 3;
         end else value <= 0;
     end
