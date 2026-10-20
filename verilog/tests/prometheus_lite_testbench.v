@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 `define WAIT \ 
     repeat(2) @(negedge clk); // we wait for the falling edge TWICE because the cpu does its work on the rising edge, and it has to FETCH and EXECUTE, taking 2 cycles.
 
