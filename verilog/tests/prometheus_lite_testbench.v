@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 `define WAIT \ 
-    repeat(5) @(negedge clk); // we wait for the falling edge 5 TIMES because the cpu does its work on the rising edge, and it has to do 5 cyces of work.
+    repeat(6) @(negedge clk); // we wait for the falling edge 6 TIMES because the cpu does its work on the rising edge, and it has to do 6 cyces of work.
 module prometheus_lite_testbench;
 
 reg clk = 0;
@@ -42,7 +42,7 @@ initial begin
     // put a number into the memory address, i think address 0x000
     dut.ram.memory[0] = 255;
 
-    instruction = 24'h030000; // set the instruction to mova 0x000
+    instruction = 24'h020000; // set the instruction to mova 0x000
     `WAIT
     if(dut.rf.registers[0] == 255)
         $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);

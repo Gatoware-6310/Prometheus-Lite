@@ -367,7 +367,7 @@ double:
 `A` contains 20 after the subroutine returns.
 
 ## NOTES
-- Prometheus Lite is now a multi cycle CPU, with FETCH_A, FETCH_B, FETCH_C, EXECUTE, and WRITEBACK cycles.. Fetch includes decoding the instruction and execute includes memory/register writeback, etc.
+- Prometheus Lite is now a multi cycle CPU, with FETCH_A, FETCH_B, FETCH_C, EXECUTE, WRITEBACK, and REGISTER_WRITEBACK cycles
 
 ## The end!
 

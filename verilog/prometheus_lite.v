@@ -36,6 +36,7 @@ module prometheus_lite(
     localparam FETCH_C = 2;
     localparam EXECUTE = 3;
     localparam WRITEBACK = 4;
+    localparam REGISTER_WRITEBACK = 5;
 
 
     memory ram(
@@ -80,7 +81,7 @@ module prometheus_lite(
     register_file rf(
         .clk(clk),
         .reset(reset),
-        .enable(rf_write_enable && state == EXECUTE),
+        .enable(rf_write_enable && state == EXECUTE || rf_write_enable && state == REGISTER_WRITEBACK),
         .read_register_a(read_register_a),
         .read_register_b(read_register_b),
         .write_register(write_register),
@@ -107,6 +108,8 @@ module prometheus_lite(
                 EXECUTE:
                     state <= WRITEBACK;
                 WRITEBACK:
+                    state <= REGISTER_WRITEBACK;
+                REGISTER_WRITEBACK:
                     state <= FETCH_A;
                 default:
                     // illegal state?? how did you even get here
