@@ -36,6 +36,8 @@ module control_unit (
     localparam MOVFB = 8'h07;
     localparam MOVFC = 8'h08;
     localparam MOVFD = 8'h09;
+    localparam MOVP = 8'h0A;
+    localparam MOVFP = 8'h0B;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -122,6 +124,21 @@ module control_unit (
                 read_register_a = 3;
                 memory_address = {operand_1[2:0], operand_2};
                 memory_write_data = data_a;
+            end
+            MOVP: begin
+                if(operand_2 == 0) begin
+                    read_register_a = 8'h00;
+                    read_register_b = 8'h01;
+                end else begin
+                    read_register_a = 8'h02;
+                    read_register_b = 8'h03;
+                end
+                memory_read_enable = 1;
+                memory_address = {data_a, data_b[2:0]}; // concatenate the last 3 bits of register 2 onto register 1
+                write_register = operand_1[1:0]; // get destination registr
+                rf_write_enable = 1;
+                write_data = memory_read_data;
+                next_state = 6;
             end
             default: begin
                 // illegal instruction! maybe an exception register later?

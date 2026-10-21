@@ -7,6 +7,15 @@ data = bytearray()
 def raise_error(msg):
     raise Exception(msg)
 
+def get_pair(pair):
+    match pair.lower():
+        case 'ab':
+            return 0x00
+        case 'cd':
+            return 0x01
+        default:
+            raise_error("Invalid register pair: " + pair)
+
 def get_register(reg: str):
     match reg.lower():
         case 'a':
@@ -17,6 +26,8 @@ def get_register(reg: str):
             return 0x02
         case 'd':
             return 0x03
+        default:
+            raise_error("Invalid register: " + reg)
 
 def movabcd(opcode, operand):
     data.append(opcode)
@@ -60,6 +71,14 @@ def assemble_instruction(instruction):
             movabcd(0x08, operands[0])
         case 'movfd':
             movabcd(0x09, operands[0])
+        case 'movp':
+            data.append(0x0A)
+            data.append(get_register(operands[0]))
+            data.append(get_pair(operands[1]))
+        case 'movfp':
+            data.append(0x0B)
+            data.append(get_pair(operands[0]))
+            data.append(get_register(operands[1]))
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:
