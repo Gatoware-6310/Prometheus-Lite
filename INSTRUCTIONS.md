@@ -14,7 +14,7 @@
 | `0x08` | `movfc [address]` | [x] |
 | `0x09` | `movfd [address]` | [x] |
 | `0x0A` | `movp [destination], [pair]` | [x] |
-| `0x0B` | `movfp [pair], [source]` | [x] |
+| `0x0B` | `movfp [pair], [source]` | [] |
 | `0x10` | `add [destination], [source]` | [ ] |
 | `0x11` | `adc [destination], [source]` | [ ] |
 | `0x12` | `sub [destination], [source]` | [ ] |
