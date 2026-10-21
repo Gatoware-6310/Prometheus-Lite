@@ -54,8 +54,12 @@ initial begin
     dut.ram.memory[13] = 8'h02;
     dut.ram.memory[14] = 8'h00;
 
+    dut.ram.memory[15] = 8'h0B; //movp
+
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
+
+    dut.ram.memory[2047] = 67; // last index
 
     `WAIT
     reset = 0;
