@@ -54,10 +54,21 @@ initial begin
     dut.ram.memory[13] = 8'h02;
     dut.ram.memory[14] = 8'h00;
 
-
-    dut.ram.memory[15] = 8'h0B; //movp a, ab
+    // Move 0x02 into A
+    dut.ram.memory[15] = 8'h00;
     dut.ram.memory[16] = 8'h00;
-    dut.ram.memory[17] = 8'h00;
+    dut.ram.memory[17] = 8'h02;
+
+
+    // Move 0x00 into B
+    dut.ram.memory[18] = 8'h00;
+    dut.ram.memory[19] = 8'h01;
+    dut.ram.memory[20] = 8'h0;
+    // this makes the addres 0x200 in pair AB
+
+    dut.ram.memory[21] = 8'h0B; //movp a, ab
+    dut.ram.memory[22] = 8'h00;
+    dut.ram.memory[23] = 8'h00;
 
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
@@ -88,19 +99,19 @@ initial begin
         $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE MEMORY INTO REGISTER %d, [FAIL]", dut.rf.registers[0]);
 
-    wait(dut.value_pc == 14);
+    wait(dut.value_pc == 15);
     @(negedge clk)
     if(dut.ram.memory[512] == 63)
         $display("MOVE BYTE FROM REGISTER INTO MEMORY %d, [PASS]", dut.ram.memory[512]);
     else
         $fatal(1, "MOVE BYTE FROM REGISTER INTO MEMORY %d, [FAIL]", dut.ram.memory[512]);
 
-    wait(dut.value_pc == 17);
+    wait(dut.value_pc == 24);
     @(negedge clk)
-    if(dut.rf.registers[0] == 0)
+    if(dut.rf.registers[0] == 63)
         $display("MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [PASS]", dut.rf.registers[0]);
     else 
-        $display("MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [PASS]", dut.rf.registers[0]);
+        $fatal(1, "MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [FAIL]", dut.rf.registers[0]);
 
     $display("");
     $finish;
