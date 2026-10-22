@@ -66,7 +66,7 @@ initial begin
     dut.ram.memory[20] = 8'h0;
     // this makes the addres 0x200 in pair AB
 
-    dut.ram.memory[21] = 8'h0B; //movp a, ab
+    dut.ram.memory[21] = 8'h0A; //movp a, ab
     dut.ram.memory[22] = 8'h00;
     dut.ram.memory[23] = 8'h00;
 
