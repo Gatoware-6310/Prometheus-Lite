@@ -13,12 +13,14 @@ module prometheus_lite(
     wire rf_write_enable;
     wire[1:0] read_register_a;
     wire[1:0] read_register_b;
+    wire[1:0] read_register_c;
     wire[1:0] write_register;
     wire[7:0] write_data;
     wire[7:0] alu_opcode;
     // Register file outputs
     wire[7:0] data_a;
     wire[7:0] data_b;
+    wire[7:0] data_c;
 
     /* Fetch signals */
     reg [10:0] fetch_address;
@@ -100,8 +102,10 @@ module prometheus_lite(
         .rf_write_enable(rf_write_enable),
         .read_register_a(read_register_a),
         .read_register_b(read_register_b),
+        .read_register_c(read_register_c),
         .data_a(data_a),
         .data_b(data_b),
+        .data_c(data_c),
         .memory_read_enable(cu_memory_read_enable),
         .memory_write_enable(cu_memory_write_enable),
         .memory_address(cu_memory_address),
@@ -117,10 +121,12 @@ module prometheus_lite(
         .enable(rf_write_enable && state == REGISTER_WRITEBACK),
         .read_register_a(read_register_a),
         .read_register_b(read_register_b),
+        .read_register_c(read_register_c),
         .write_register(write_register),
         .write_data(write_data),
         .data_a(data_a),
-        .data_b(data_b)
+        .data_b(data_b),
+        .data_c(data_c)
     );
 
     program_counter pc(

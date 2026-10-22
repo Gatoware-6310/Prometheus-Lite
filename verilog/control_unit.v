@@ -12,8 +12,10 @@ module control_unit (
     /* REGISTER FILE STUFF */
     output reg[1:0] read_register_a,
     output reg[1:0] read_register_b,
+    output reg[1:0] read_register_c,
     input wire[7:0] data_a,
     input wire[7:0] data_b,
+    input wire[7:0] data_c,
     output reg rf_write_enable,
     output reg[1:0] write_register,
     output reg[7:0] write_data,
@@ -135,11 +137,24 @@ module control_unit (
                 end
                     memory_read_enable = 1;
                     memory_address = {data_a[2:0], data_b}; // concatenate the last 3 bits of register 2 onto register 1
-                    write_register = operand_1[1:0]; // get destination registr
+                    write_register = operand_1[1:0]; // get destination register
                     rf_write_enable = 1;
                     write_data = memory_read_data;
                     next_state = 6;
                 end
+            MOVFP: begin
+                if(operand_1 == 0) begin
+                    read_register_a = 8'h00;
+                    read_register_b = 8'h01;
+                end else begin
+                    read_register_a = 8'h02;
+                    read_register_b = 8'h03;
+                end
+                memory_address = {data_a[2:0], data_b}; // concatenate the last 3 bits of register 2 onto register 1
+                read_register_c = operand_2[1:0];
+                memory_write_data = data_c;
+                memory_write_enable = 1;
+            end
             default: begin
                 // illegal instruction! maybe an exception register later?
             end

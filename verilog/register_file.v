@@ -5,12 +5,14 @@ module register_file ( // Set up stuff
 
     input wire[1:0] read_register_a, // there's a and b so that we can do things like `add a, b`
     input wire[1:0] read_register_b,
+    input wire[1:0] read_register_c,
     input wire[1:0] write_register,
 
     input wire[7:0] write_data,
 
     output wire[7:0] data_a,
-    output wire[7:0] data_b
+    output wire[7:0] data_b,
+    output wire[7:0] data_c // third port for movfp
 );
 
 reg [7:0] registers [0:3]; // an array of 4 8 bit `reg`s
