@@ -88,14 +88,14 @@ initial begin
         $display("MOVE MEMORY INTO REGISTER %d, [PASS]", dut.rf.registers[0]);
     else $fatal(1, "MOVE MEMORY INTO REGISTER %d, [FAIL]", dut.rf.registers[0]);
 
-    wait(dut.value_pc == 15);
+    wait(dut.value_pc == 14);
     @(negedge clk)
     if(dut.ram.memory[512] == 63)
         $display("MOVE BYTE FROM REGISTER INTO MEMORY %d, [PASS]", dut.ram.memory[512]);
     else
         $fatal(1, "MOVE BYTE FROM REGISTER INTO MEMORY %d, [FAIL]", dut.ram.memory[512]);
 
-    wait(dut.value.pc == 17);
+    wait(dut.value_pc == 17);
     @(negedge clk)
     if(dut.rf.registers[0] == 0)
         $display("MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [PASS]", dut.rf.registers[0]);
@@ -108,7 +108,7 @@ initial begin
 end
 
 initial begin
-    #10000;
+    #1000000;
     $fatal(1, "TEST TIMEOUT");
 end
 

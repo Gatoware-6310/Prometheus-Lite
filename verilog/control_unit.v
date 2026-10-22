@@ -133,20 +133,19 @@ module control_unit (
                     read_register_a = 8'h02;
                     read_register_b = 8'h03;
                 end
-                MOVFP: begin
-                end
-              
-                memory_read_enable = 1;
-                memory_address = {data_a, data_b[2:0]}; // concatenate the last 3 bits of register 2 onto register 1
-                write_register = operand_1[1:0]; // get destination registr
-                rf_write_enable = 1;
-                write_data = memory_read_data;
-                next_state = 6;
             end
+                MOVFP: begin              
+                    memory_read_enable = 1;
+                    memory_address = {data_a, data_b[2:0]}; // concatenate the last 3 bits of register 2 onto register 1
+                    write_register = operand_1[1:0]; // get destination registr
+                    rf_write_enable = 1;
+                    write_data = memory_read_data;
+                    next_state = 6;
+                end
             default: begin
                 // illegal instruction! maybe an exception register later?
             end
         endcase
     end
 
-endmodul
+endmodule
