@@ -41,6 +41,9 @@ module control_unit (
     localparam MOVP = 8'h0A;
     localparam MOVFP = 8'h0B;
     localparam ADD = 8'h10;
+    localparam SUB = 8'h12;
+    localparam ADDI = 8'h17;
+    localparam SUBI = 8'h18;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -165,7 +168,28 @@ module control_unit (
                 rf_write_enable = 1;
                 next_state = 6;
             end
-
+            SUB: begin
+                read_register_a = operand_1[1:0]; // destination
+                read_register_b = operand_2[1:0]; //source
+                write_data = data_a - data_b;
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            ADDI: begin
+                read_register_a = operand_1[1:0]; // destination
+                write_data = data_a + operand_2; // imediate
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            SUBI: begin
+                read_register_a = operand_1[1:0]; // destination
+                write_data = data_a - operand_2; // immediate
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
             default: begin
                 // illegal instruction! maybe an exception register later?
             end

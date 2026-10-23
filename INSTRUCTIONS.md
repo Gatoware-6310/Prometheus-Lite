@@ -15,15 +15,15 @@
 | `0x09` | `movfd [address]` | [x] |
 | `0x0A` | `movp [destination], [pair]` | [x] |
 | `0x0B` | `movfp [pair], [source]` | [x] |
-| `0x10` | `add [destination], [source]` | [ ] |
+| `0x10` | `add [destination], [source]` | [x] |
 | `0x11` | `adc [destination], [source]` | [ ] |
-| `0x12` | `sub [destination], [source]` | [ ] |
+| `0x12` | `sub [destination], [source]` | [x] |
 | `0x13` | `sbc [destination], [source]` | [ ] |
 | `0x14` | `inc (ASSEMBLER MACRO) [register]` | [ ] |
 | `0x15` | `dec (ASSEMBLER MACRO) [register]` | [ ] |
 | `0x16` | `cmp [destination], [source]` | [ ] |
-| `0x17` | `addi [register], [immediate]` | [ ] |
-| `0x18` | `subi [register], [immediate]` | [ ] |
+| `0x17` | `addi [register], [immediate]` | [x] |
+| `0x18` | `subi [register], [immediate]` | [x] |
 | `0x19` | `mul [destination], [source]` | [ ] |
 | `0x20` | `and [destination], [source]` | [ ] |
 | `0x21` | `or [destination], [source]` | [ ] |

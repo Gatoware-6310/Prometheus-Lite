@@ -87,6 +87,27 @@ initial begin
     dut.ram.memory[34] = 8'h00;
     dut.ram.memory[35] = 8'h01;
 
+    // subtract
+
+    // move 3 into b
+    dut.ram.memory[36] = 8'h00;
+    dut.ram.memory[37] = 8'h01;
+    dut.ram.memory[38] = 8'h03;
+
+    dut.ram.memory[39] = 8'h12;
+    dut.ram.memory[40] = 8'h00;
+    dut.ram.memory[41] = 8'h01;
+
+    // add 63 to D
+    dut.ram.memory[42] = 8'h17;
+    dut.ram.memory[43] = 8'h03;
+    dut.ram.memory[44] = 8'h3F;
+
+    // subtract 10 from D
+    dut.ram.memory[45] = 8'h18;
+    dut.ram.memory[46] = 8'h03;
+    dut.ram.memory[47] = 8'h0A;
+
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
 
@@ -143,6 +164,28 @@ initial begin
         $display("ADD REGISTER TO REGISTER %d [PASS]", dut.rf.registers[0]);
     else
         $fatal(1, "ADD REGISTER TO REGISTER %d [FAIL]", dut.rf.registers[0]);
+
+    wait(dut.value_pc == 42);
+    @(negedge clk)
+    if(dut.rf.registers[0] == 7)
+        $display("SUBTRACT REGISTER FROM REGISTER %d [PASS]", dut.rf.registers[0]);
+    else
+        $fatal(1, "SUBTRACT REGISTER FROM REGISTER %d [FAIL]", dut.rf.registers[0]);
+
+    wait(dut.value_pc == 45);
+    @(negedge clk)
+    if(dut.rf.registers[3] == 63)
+        $display("ADD IMMEDIATE VALUE TO REGISTER %d [PASS]", dut.rf.registers[3]);
+    else
+        $fatal(1, "ADD IMMEDIATE VALUE TO REGISTER %d [FAIL]", dut.rf.registers[3]);
+
+    wait(dut.value_pc == 48);
+    @(negedge clk)
+    if(dut.rf.registers[3] == 53)
+        $display("SUBTRACT IMMEDIATE VALUE FROM REGISTER %d [PASS]", dut.rf.registers[3]);
+    else
+        $fatal(1, "SUBTRACT IMMEDIATE VALUE FROM REGISTER %d [FAIL]", dut.rf.registers[3]);
+
     $finish;
 end
 

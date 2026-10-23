@@ -7,6 +7,9 @@ data = bytearray()
 def raise_error(msg):
     raise Exception(msg)
 
+def immediate(integer):
+    return int(integer) if (integer) <= 255 and int(integer) >= 0 else raise_error("Immediate cannot be higher than 255 or lower than 0")
+
 def get_pair(pair):
     match pair.lower():
         case 'ab':
@@ -50,7 +53,7 @@ def assemble_instruction(instruction):
         case 'movi':
             data.append(0x00)
             data.append(get_register(operands[0]))
-            data.append(int(operands[1]) if (int(operands[1]) <= 255 and int(operands[1]) >= 0) else raise_error("Immediate cannot be higher than 255 or lower than 0"))
+            data.append(immediate(operands[1]))
         case 'movr':
             data.append(0x01)
             data.append(get_register(operands[0]))
@@ -79,6 +82,22 @@ def assemble_instruction(instruction):
             data.append(0x0B)
             data.append(get_pair(operands[0]))
             data.append(get_register(operands[1]))
+        case 'add':
+            data.append(0x10)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
+        case 'sub':
+            data.append(0x12)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
+        case 'addi':
+            data.append(0x17)
+            data.append(get_register(operands[0]))
+            data.append(operands[1])
+        case 'subi':
+            data.append(0x18)
+            data.append(get_register(operands[0]))
+            data.append(operands[1])
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:
