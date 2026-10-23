@@ -20,6 +20,7 @@ reg [7:0] registers [0:3]; // an array of 4 8 bit `reg`s
 /* combinational reads i think */
 assign data_a = registers[read_register_a];
 assign data_b = registers[read_register_b];
+assign data_c = registers[read_register_c];
 
 
 /* this happens on the high clock edge, resets all the registers if the input for that is true */

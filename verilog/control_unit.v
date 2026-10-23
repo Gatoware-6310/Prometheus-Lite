@@ -49,6 +49,7 @@ module control_unit (
 
         read_register_a = 0;
         read_register_b = 0;
+        read_register_c = 0;
         write_register = 0;
         write_data = 0;
 
@@ -160,6 +161,9 @@ module control_unit (
                 read_register_a = operand_1[1:0]; // destination
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a + data_b;
+                write_register = operand_1[1:0];
+                write_register = 1;
+                next_state = 6;
             end
 
             default: begin
