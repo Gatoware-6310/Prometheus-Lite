@@ -162,7 +162,7 @@ module control_unit (
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a + data_b;
                 write_register = operand_1[1:0];
-                write_register = 1;
+                rf_write_enable = 1;
                 next_state = 6;
             end
 
