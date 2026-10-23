@@ -19,8 +19,8 @@
 | `0x11` | `adc [destination], [source]` | [ ] |
 | `0x12` | `sub [destination], [source]` | [x] |
 | `0x13` | `sbc [destination], [source]` | [ ] |
-| `0x14` | `inc (ASSEMBLER MACRO) [register]` | [ ] |
-| `0x15` | `dec (ASSEMBLER MACRO) [register]` | [ ] |
+| `0x14` | `inc (ASSEMBLER MACRO) [register]` | [x] |
+| `0x15` | `dec (ASSEMBLER MACRO) [register]` | [x] |
 | `0x16` | `cmp [destination], [source]` | [ ] |
 | `0x17` | `addi [register], [immediate]` | [x] |
 | `0x18` | `subi [register], [immediate]` | [x] |

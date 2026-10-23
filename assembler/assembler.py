@@ -98,6 +98,15 @@ def assemble_instruction(instruction):
             data.append(0x18)
             data.append(get_register(operands[0]))
             data.append(operands[1])
+        case 'inc':
+            data.append(0x17)
+            data.append(get_register(operands[0]))
+            data.append(1)
+        case 'dec':
+            data.append(0x18)
+            data.append(get_register(operands[0]))
+            data.append(1)
+        
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:
