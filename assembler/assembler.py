@@ -1,13 +1,21 @@
 # Prometheus Lite assembler, made in python to make my life easy.
 # Probably gonna rewrite in a faster language later?
 
-user_input = input()
+import sys
+
 data = bytearray()
 
 def raise_error(msg):
     raise Exception(msg)
 
+if len(sys.argv) < 3 or len(sys.argv) > 3:
+    raise_error("Usage: python assembler.py filename.asm output.bin")
+
+source = sys.argv[1]
+output_file = sys.argv[2]
+
 def immediate(integer):
+    integer = int(integer)
     return int(integer) if (integer) <= 255 and int(integer) >= 0 else raise_error("Immediate cannot be higher than 255 or lower than 0")
 
 def get_pair(pair):
@@ -16,7 +24,7 @@ def get_pair(pair):
             return 0x00
         case 'cd':
             return 0x01
-        default:
+        case _:
             raise_error("Invalid register pair: " + pair)
 
 def get_register(reg: str):
@@ -29,7 +37,7 @@ def get_register(reg: str):
             return 0x02
         case 'd':
             return 0x03
-        default:
+        case _:
             raise_error("Invalid register: " + reg)
 
 def movabcd(opcode, operand):
@@ -93,11 +101,11 @@ def assemble_instruction(instruction):
         case 'addi':
             data.append(0x17)
             data.append(get_register(operands[0]))
-            data.append(operands[1])
+            data.append(immediate(operands[1]))
         case 'subi':
             data.append(0x18)
             data.append(get_register(operands[0]))
-            data.append(operands[1])
+            data.append(immediate(operands[1]))
         case 'inc':
             data.append(0x17)
             data.append(get_register(operands[0]))
@@ -113,6 +121,18 @@ def assemble_instruction(instruction):
             raise_error("Illegal instruction encountered: " + opcode)
             return
 
-assemble_instruction(user_input)
-for b in data:
-    print(b)
+with open(source, 'r', encoding='utf-8') as file:
+    for instruction in file:
+        assemble_instruction(instruction)
+
+with open(output_file, 'wb') as binary: # Output binary data
+    binary.write(data)
+
+# Hex data for verilog
+hex_string = " ".join(f"{b:02X}" for b in data) # Iterate through every byte in the byte array, make it a 2 digit hexadecimal string. Also add spaces after each.
+
+with open("hex_" + output_file, 'w', encoding='utf-8') as hex_file: # Write it
+    hex_file.write(hex_string)
+
+print(f"Assembled {int(len(data) / 3)} instructions ({len(data)} bytes).")
+print(f"OUTPUTS: {output_file}, {"hex_" + output_file}")

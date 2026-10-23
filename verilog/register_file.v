@@ -17,13 +17,13 @@ module register_file ( // Set up stuff
 
 reg [7:0] registers [0:3]; // an array of 4 8 bit `reg`s
 
-/* combinational reads i think */
+/* Combinational reads */
 assign data_a = registers[read_register_a];
 assign data_b = registers[read_register_b];
 assign data_c = registers[read_register_c];
 
 
-/* this happens on the high clock edge, resets all the registers if the input for that is true */
+/* This happens on the high clock edge, resets all the registers if the input for that is true */
 always@(posedge clk) begin
     if(reset) begin // reset takes priority
         for (integer i = 0; i < 4; i = i + 1) begin

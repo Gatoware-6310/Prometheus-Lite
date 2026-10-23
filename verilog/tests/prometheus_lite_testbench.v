@@ -186,6 +186,20 @@ initial begin
     else
         $fatal(1, "SUBTRACT IMMEDIATE VALUE FROM REGISTER %d [FAIL]", dut.rf.registers[3]);
 
+
+    $display("Resetting the CPU...");
+    reset = 1;
+    `WAIT
+    reset = 0;
+    $display("--------- Successful! Probably ---------\n");
+
+    $display("--------- Program Start ---------\n");
+
+    $readmemh("../assembler/hex_test.bin", dut.ram.memory);
+    repeat (2048) @(negedge clk);
+    $display("Program finished execution!");
+    $display("REGISTERS:");
+    $display("A: %d, B: %d, C: %d, D: %d", dut.rf.registers[0], dut.rf.registers[1], dut.rf.registers[3], dut.rf.registers[4]);
     $finish;
 end
 
