@@ -70,9 +70,22 @@ initial begin
     dut.ram.memory[22] = 8'h00;
     dut.ram.memory[23] = 8'h00;
 
-    dut.ram.memory[24] = 8'h0B; //movp a, ab
+    dut.ram.memory[24] = 8'h0B; //movfp a, ab
     dut.ram.memory[25] = 8'h00;
     dut.ram.memory[26] = 8'h00;
+
+    // move 5 into a and b then add them together
+    dut.ram.memory[27] = 8'h00;
+    dut.ram.memory[28] = 8'h01;
+    dut.ram.memory[29] = 8'h05;
+
+    dut.ram.memory[30] = 8'h00;
+    dut.ram.memory[31] = 8'h02;
+    dut.ram.memory[32] = 8'h05;
+
+    dut.ram.memory[27] = 8'h10;
+    dut.ram.memory[28] = 8'h00;
+    dut.ram.memory[29] = 8'h01;
 
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
@@ -118,8 +131,6 @@ initial begin
         $fatal(1, "MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [FAIL]", dut.rf.registers[0]);
 
     $display("");
-    $finish;
-
     wait(dut.value_pc == 27);
     @(negedge clk)
     if(dut.ram.memory[1008] == 63)
@@ -127,7 +138,12 @@ initial begin
     else 
         $fatal(1, "MOVE BYTE FROM REGISTER TO MEMORY POINTED TO BY REGISTER PAIR %d [FAIL]", dut.ram.memory[1008]);
 
-    $display("");
+    wait(dut.value_pc == 36);
+    @(negedge clk)
+    if(dut.rf.registers[0] == 10)
+        $display("ADD REGISTER TO REGISTER %d [PASS]", dut.rf.registers[0]);
+    else
+        $fatal(1, "ADD REGISTER TO REGISTER %d [FAIL]", dut.rf.registers[0]);
     $finish;
 end
 

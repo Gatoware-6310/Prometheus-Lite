@@ -40,6 +40,7 @@ module control_unit (
     localparam MOVFD = 8'h09;
     localparam MOVP = 8'h0A;
     localparam MOVFP = 8'h0B;
+    localparam ADD = 8'h10;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -155,6 +156,12 @@ module control_unit (
                 memory_write_data = data_c;
                 memory_write_enable = 1;
             end
+            ADD: begin
+                read_register_a = operand_1[1:0]; // destination
+                read_register_b = operand_2[1:0]; //source
+                write_data = data_a + data_b;
+            end
+
             default: begin
                 // illegal instruction! maybe an exception register later?
             end
