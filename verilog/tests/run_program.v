@@ -28,7 +28,7 @@ initial begin
     $readmemh("build/programs/program.bin.hex", dut.ram.memory); // Assuming you're running the makefile from the root, I mean how else would you right?
 
     reset = 0;
-    wait(0);
+    wait(0); // magic
 end
 
 initial begin
