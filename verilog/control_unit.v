@@ -2,6 +2,9 @@ module control_unit (
     input wire clk,
     input wire enable,
 
+    /* Flags */
+    output reg zero,
+
     /* CURRENT INSTRUCTION STUFF, like for jumps */
     input wire[7:0] opcode,
     input wire[7:0] operand_1,
@@ -164,6 +167,7 @@ module control_unit (
                 read_register_a = operand_1[1:0]; // destination
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a + data_b;
+                if(wire_data == 0) zero = 0; else zero = 1;
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
                 next_state = 6;

@@ -3,6 +3,9 @@ module prometheus_lite(
     input wire clk,
     input wire reset
 );
+    /* Flags */
+    wire zero;
+
     /* IR stuff */
     wire[7:0] opcode;
     wire[7:0] operand_1;
@@ -112,7 +115,8 @@ module prometheus_lite(
         .memory_write_data(cu_memory_write_data),
         .memory_read_data(memory_read_data),
         .state(state),
-        .next_state(next_state)
+        .next_state(next_state),
+        .zero(zero)
     );
 
     register_file rf(
