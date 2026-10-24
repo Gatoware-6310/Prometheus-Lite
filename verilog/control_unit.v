@@ -74,6 +74,8 @@ module control_unit (
         write_zero = 0;
 
         next_state = state;
+        jump_pc = 0;
+        jump_value_pc = 0;
 
         case(opcode)
             MOVI: begin // MOVE IMMEDIATE, 0x0, movi [reg], [immediate]
@@ -229,8 +231,8 @@ module control_unit (
                 if(zero) begin
                     jump_pc = 1;
                     jump_value_pc = {operand_1[2:0], operand_2};
-                    next_state = 6;
                 end
+                next_state = 6;
             end
             default: begin
                 // illegal instruction! maybe an exception register later?
