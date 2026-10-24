@@ -43,8 +43,8 @@ module prometheus_lite(
     wire [7:0] memory_write_data;
 
     /* Program Counter stuff */
-    wire jump_pc = 0;
-    wire[10:0] jump_value_pc = 0;
+    wire jump_pc;
+    wire[10:0] jump_value_pc;
     wire[10:0] value_pc;
 
     // State can be 5 things, so ceil(log2(5)) = 3

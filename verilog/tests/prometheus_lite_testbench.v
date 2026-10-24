@@ -116,7 +116,22 @@ initial begin
     // jump to the start
     dut.ram.memory[51] = 8'h30;
     dut.ram.memory[52] = 8'h00;
-    dut.ram.memory[53] = 8'h00;
+    dut.ram.memory[53] = 8'h3C;
+
+    // move 63 into a
+    dut.ram.memory[60] = 8'h00;
+    dut.ram.memory[61] = 8'h00;
+    dut.ram.memory[62] = 8'h3F;
+
+    // subtract 63 from a
+    dut.ram.memory[63] = 8'h18;
+    dut.ram.memory[64] = 8'h00;
+    dut.ram.memory[65] = 8'h3F;
+
+    // jump if zero flag
+    dut.ram.memory[66] = 8'h31;
+    dut.ram.memory[67] = 8'h00;
+    dut.ram.memory[68] = 8'h00;
 
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
@@ -203,12 +218,19 @@ initial begin
     else
         $fatal(1, "ZERO FLAG TEST %d [FAIL]", dut.zero, dut.rf.registers[3]);
 
-    wait(dut.value_pc == 54);
+    wait(dut.value_pc == 60); // wait until it jumps to 0, which it will
     @(negedge clk)
-    if(dut.value_pc == 0)
+    if(dut.value_pc == 60)
         $display("JUMP TEST %d [PASS]", dut.value_pc);
     else
-        $fatal(1, "JUMP TEST %d [FAIL]", dut.value_pc);
+        $fatal(1, "JUMP TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
+
+    wait(dut.value_pc == 0); // wait until it jumps to 0, which it will
+    @(negedge clk)
+    if(dut.value_pc == 0)
+        $display("JUMP IF ZERO TEST %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP IF ZERO TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
 
 
     $display("Resetting the CPU...");

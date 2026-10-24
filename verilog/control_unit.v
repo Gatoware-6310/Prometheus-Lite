@@ -54,7 +54,7 @@ module control_unit (
     localparam ADDI = 8'h17;
     localparam SUBI = 8'h18;
     localparam JMP = 8'h30;
-
+    localparam JZ = 8'h31;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -222,8 +222,15 @@ module control_unit (
             end
             JMP: begin
                 jump_pc = 1;
-                jump_value_pc = {data_a[2:0], data_b};
+                jump_value_pc = {operand_1[2:0], operand_2};
                 next_state = 6;
+            end
+            JZ: begin
+                if(zero) begin
+                    jump_pc = 1;
+                    jump_value_pc = {operand_1[2:0], operand_2};
+                    next_state = 6;
+                end
             end
             default: begin
                 // illegal instruction! maybe an exception register later?
