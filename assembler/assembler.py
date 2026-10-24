@@ -134,7 +134,7 @@ with open(output_file, 'wb') as binary: # Output binary data
 # Hex data for verilog
 hex_string = " ".join(f"{b:02X}" for b in data) # Iterate through every byte in the byte array, make it a 2 digit hexadecimal string. Also add spaces after each.
 
-with open("hex_" + output_file, 'w', encoding='utf-8') as hex_file: # Write it
+with open(output_file + ".hex", 'w', encoding='utf-8') as hex_file: # Write it
     hex_file.write(hex_string)
 
 print(f"Assembled {int(len(data) / 3)} instructions ({len(data)} bytes).")

@@ -231,23 +231,6 @@ initial begin
         $display("JUMP IF ZERO TEST %d [PASS]", dut.value_pc);
     else
         $fatal(1, "JUMP IF ZERO TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
-
-
-    $display("Resetting the CPU...");
-    reset = 1;
-    `WAIT
-    reset = 0;
-    $display("--------- Successful! Probably ---------\n");
-
-    $display("--------- Program Start ---------\n");
-
-    $readmemh("../assembler/hex_test.bin", dut.ram.memory);
-    repeat (2048) @(negedge clk);
-    $display("Program finished execution!");
-    $display("REGISTERS:");
-    $display("A: %d, B: %d, C: %d, D: %d", dut.rf.registers[0], dut.rf.registers[1], dut.rf.registers[2], dut.rf.registers[3]);
-    $display("FLAGS:");
-    $display("Zero: ", dut.zero);
     $finish;
 end
 
