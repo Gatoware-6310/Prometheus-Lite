@@ -167,7 +167,12 @@ module control_unit (
                 read_register_a = operand_1[1:0]; // destination
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a + data_b;
-                if(wire_data == 0) zero = 0; else zero = 1;
+
+                if(write_data == 0)
+                    zero = 1; 
+                else 
+                    zero = 0;
+
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
                 next_state = 6;
@@ -176,6 +181,12 @@ module control_unit (
                 read_register_a = operand_1[1:0]; // destination
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a - data_b;
+                
+                if(write_data == 0)
+                    zero = 1; 
+                else 
+                    zero = 0;
+
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
                 next_state = 6;
@@ -183,6 +194,12 @@ module control_unit (
             ADDI: begin
                 read_register_a = operand_1[1:0]; // destination
                 write_data = data_a + operand_2; // imediate
+
+                if(write_data == 0)
+                    zero = 1; 
+                else 
+                    zero = 0;
+
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
                 next_state = 6;
@@ -190,6 +207,12 @@ module control_unit (
             SUBI: begin
                 read_register_a = operand_1[1:0]; // destination
                 write_data = data_a - operand_2; // immediate
+
+                if(write_data == 0)
+                    zero = 1; 
+                else 
+                    zero = 0;
+
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
                 next_state = 6;

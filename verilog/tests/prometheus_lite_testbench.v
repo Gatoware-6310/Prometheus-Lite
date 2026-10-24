@@ -108,6 +108,11 @@ initial begin
     dut.ram.memory[46] = 8'h03;
     dut.ram.memory[47] = 8'h0A;
 
+    // subtract 53 from D (for zero flag test)
+    dut.ram.memory[48] = 8'h18;
+    dut.ram.memory[49] = 8'h03;
+    dut.ram.memory[50] = 8'h35;
+
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
 
@@ -186,6 +191,13 @@ initial begin
     else
         $fatal(1, "SUBTRACT IMMEDIATE VALUE FROM REGISTER %d [FAIL]", dut.rf.registers[3]);
 
+    wait(dut.value_pc == 51);
+    @(negedge clk)
+    if(dut.zero)
+        $display("ZERO FLAG TEST %d [PASS]", dut.zero);
+    else
+        $fatal(1, "ZERO FLAG TEST %d [FAIL]", dut.zero, dut.rf.registers[3]);
+
 
     $display("Resetting the CPU...");
     reset = 1;
@@ -199,7 +211,9 @@ initial begin
     repeat (2048) @(negedge clk);
     $display("Program finished execution!");
     $display("REGISTERS:");
-    $display("A: %d, B: %d, C: %d, D: %d", dut.rf.registers[0], dut.rf.registers[1], dut.rf.registers[3], dut.rf.registers[4]);
+    $display("A: %d, B: %d, C: %d, D: %d", dut.rf.registers[0], dut.rf.registers[1], dut.rf.registers[2], dut.rf.registers[3]);
+    $display("FLAGS:");
+    $display("Zero: ", dut.zero);
     $finish;
 end
 
