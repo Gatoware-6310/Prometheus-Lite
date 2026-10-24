@@ -116,7 +116,9 @@ module prometheus_lite(
         .memory_read_data(memory_read_data),
         .state(state),
         .next_state(next_state),
-        .zero(zero)
+        .zero(zero),
+        .jump_pc(jump_pc),
+        .jump_value_pc(jump_value_pc)
     );
 
     register_file rf(

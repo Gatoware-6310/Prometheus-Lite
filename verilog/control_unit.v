@@ -6,6 +6,9 @@ module control_unit (
     output reg zero,
 
     /* CURRENT INSTRUCTION STUFF, like for jumps */
+    output reg jump_pc = 0,
+    output reg[10:0] jump_value_pc = 0,
+
     input wire[7:0] opcode,
     input wire[7:0] operand_1,
     input wire[7:0] operand_2,
@@ -50,6 +53,8 @@ module control_unit (
     localparam SUB = 8'h12;
     localparam ADDI = 8'h17;
     localparam SUBI = 8'h18;
+    localparam JMP = 8'h30;
+
 
     always@(*) begin
         rf_write_enable = 0;
@@ -213,6 +218,11 @@ module control_unit (
 
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
+                next_state = 6;
+            end
+            JMP: begin
+                jump_pc = 1;
+                jump_value_pc = {data_a[2:0], data_b};
                 next_state = 6;
             end
             default: begin

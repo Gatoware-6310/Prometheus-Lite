@@ -113,6 +113,11 @@ initial begin
     dut.ram.memory[49] = 8'h03;
     dut.ram.memory[50] = 8'h35;
 
+    // jump to the start
+    dut.ram.memory[51] = 8'h30;
+    dut.ram.memory[52] = 8'h00;
+    dut.ram.memory[53] = 8'h00;
+
     // put a number into the memory address, 0x100
     dut.ram.memory[256] = 255;
 
@@ -197,6 +202,13 @@ initial begin
         $display("ZERO FLAG TEST %d [PASS]", dut.zero);
     else
         $fatal(1, "ZERO FLAG TEST %d [FAIL]", dut.zero, dut.rf.registers[3]);
+
+    wait(dut.value_pc == 54);
+    @(negedge clk)
+    if(dut.value_pc == 0)
+        $display("JUMP TEST %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP TEST %d [FAIL]", dut.value_pc);
 
 
     $display("Resetting the CPU...");
