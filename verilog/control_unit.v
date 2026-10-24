@@ -31,6 +31,9 @@ module control_unit (
     input wire[7:0] memory_read_data
 );
 
+    reg zero_next;
+    reg write_zero;
+
     localparam MOVI = 8'h00;
     localparam MOVR = 8'h01;
     localparam MOVA = 8'h02;
@@ -61,6 +64,9 @@ module control_unit (
 
         memory_address = 0;
         memory_write_data = 0;
+
+        zero_next = 0;
+        write_zero = 0;
 
         next_state = state;
 
@@ -168,10 +174,8 @@ module control_unit (
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a + data_b;
 
-                if(write_data == 0)
-                    zero = 1; 
-                else 
-                    zero = 0;
+                zero_next = (write_data == 0);
+                write_zero = 1;
 
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
@@ -182,10 +186,8 @@ module control_unit (
                 read_register_b = operand_2[1:0]; //source
                 write_data = data_a - data_b;
                 
-                if(write_data == 0)
-                    zero = 1; 
-                else 
-                    zero = 0;
+                zero_next = (write_data == 0);
+                write_zero = 1;
 
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
@@ -195,10 +197,8 @@ module control_unit (
                 read_register_a = operand_1[1:0]; // destination
                 write_data = data_a + operand_2; // imediate
 
-                if(write_data == 0)
-                    zero = 1; 
-                else 
-                    zero = 0;
+                zero_next = (write_data == 0);
+                write_zero = 1;
 
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
@@ -208,10 +208,8 @@ module control_unit (
                 read_register_a = operand_1[1:0]; // destination
                 write_data = data_a - operand_2; // immediate
 
-                if(write_data == 0)
-                    zero = 1; 
-                else 
-                    zero = 0;
+                zero_next = (write_data == 0);
+                write_zero = 1;
 
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
@@ -221,6 +219,12 @@ module control_unit (
                 // illegal instruction! maybe an exception register later?
             end
         endcase
+    end
+
+    // for flags to happen at the same time
+    always @(posedge clk) begin
+        if (enable && write_zero)
+            zero <= zero_next;
     end
 
 endmodule
