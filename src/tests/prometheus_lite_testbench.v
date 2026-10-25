@@ -134,7 +134,7 @@ initial begin
     ram.memory[49] = 8'h03;
     ram.memory[50] = 8'h35;
 
-    // jump to the start
+    // jump to the 60
     ram.memory[51] = 8'h30;
     ram.memory[52] = 8'h00;
     ram.memory[53] = 8'h3C;
@@ -144,20 +144,30 @@ initial begin
     ram.memory[61] = 8'h00;
     ram.memory[62] = 8'h3F;
     
-    // move 63 into b
+    // move 2 into b
     ram.memory[63] = 8'h00;
     ram.memory[64] = 8'h01;
-    ram.memory[65] = 8'h3F;
-
-    // compare a and b
-    ram.memory[66] = 8'h16;
+    ram.memory[65] = 8'h02;
+    
+    // multiply a by b
+    ram.memory[66] = 8'h19;
     ram.memory[67] = 8'h00;
     ram.memory[68] = 8'h01;
+    
+    // move 126 into b
+    ram.memory[69] = 8'h00;
+    ram.memory[70] = 8'h01;
+    ram.memory[71] = 8'h7E;
+
+    // compare a and b
+    ram.memory[72] = 8'h16;
+    ram.memory[73] = 8'h00;
+    ram.memory[74] = 8'h01;
 
     // jump if zero flag
-    ram.memory[69] = 8'h31;
-    ram.memory[70] = 8'h00;
-    ram.memory[71] = 8'h00;
+    ram.memory[75] = 8'h31;
+    ram.memory[76] = 8'h00;
+    ram.memory[77] = 8'h00;
 
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
@@ -250,6 +260,13 @@ initial begin
         $display("JUMP TEST %d [PASS]", dut.value_pc);
     else
         $fatal(1, "JUMP TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
+    
+    wait(dut.value_pc == 69);
+    @(negedge clk)
+    if(dut.rf.registers[0] == 126)
+        $display("MULTIPLY TEST %d [PASS]", dut.rf.registers[0]);
+    else
+        $fatal(1, "MULTIPLY TEST %d [PASS]", dut.rf.registers[0]);
 
     wait(dut.value_pc == 0); // wait until it jumps to 0, which it will
     @(negedge clk)
@@ -258,8 +275,7 @@ initial begin
     else
         $fatal(1, "JUMP IF ZERO TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
-    $finish;
-    
+    $finish;    
 end
 
 initial begin

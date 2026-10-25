@@ -56,6 +56,7 @@ module control_unit (
     localparam JMP = 8'h30;
     localparam JZ = 8'h31;
     localparam CMP = 8'h16;
+    localparam MUL = 8'h19;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -241,7 +242,19 @@ module control_unit (
                 
                 zero_next = (data_a - data_b == 0);
                 write_zero = 1;
-                
+
+                next_state = 6;
+            end
+            MUL: begin
+                read_register_a = operand_1[1:0]; // destination
+                read_register_b = operand_2[1:0]; //source
+                write_data = data_a * data_b;
+
+                zero_next = (write_data == 0);
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
                 next_state = 6;
             end
             default: begin
