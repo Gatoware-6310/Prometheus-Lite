@@ -24,17 +24,27 @@ module tt_um_gatoware_prometheus_lite (
 
     prometheus_lite cpu (
         .clk(clk),
-        .reset(~rst_n)
-    );
-
-    memory ram (
-        .clk(clk),
-        .address(memory_address),
+        .reset(~rst_n),
+        .memory_address(memory_address),
         .memory_read_enable(memory_read_enable),
         .memory_write_enable(memory_write_enable),
-        .write_data(memory_write_data),
-        .read_data(memory_read_data)
+        .memory_write_data(memory_write_data),
+        .memory_read_data(memory_read_data)
     );
+
+    `ifdef SYNTHESIS // temporary ram interface; don't try to synthesize 2kb of ram
+        assign memory_read_data = ui_in;
+    `else // use our normal ram interface if we AREN'T synthesizing
+        memory ram (
+            .clk(clk),
+            .address(memory_address),
+            .memory_read_enable(memory_read_enable),
+            .memory_write_enable(memory_write_enable),
+            .write_data(memory_write_data),
+            .read_data(memory_read_data)
+        );
+
+    `endif
 
     // This is so that optimization doesn't optimize the whole CPU out
     assign uo_out = memory_address[7:0];

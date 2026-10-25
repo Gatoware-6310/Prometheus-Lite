@@ -3,37 +3,40 @@
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import ClockCycles, Timer
 
 
 @cocotb.test()
 async def test_project(dut):
-    dut._log.info("Start")
+    dut._log.info("Starting Prometheus-Lite")
 
-    # Set the clock period to 10 us (100 KHz)
+    # Start the clock
     clock = Clock(dut.clk, 10, unit="us")
     cocotb.start_soon(clock.start())
 
     # Reset
-    dut._log.info("Reset")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
+
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    dut._log.info("Running program")
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    # Run it for 30 clock cycles
+    await ClockCycles(dut.clk, 30)
+    await Timer(1, unit="ns")
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+    # Read the address
+    address = int(dut.uo_out.value)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
+    dut._log.info(f"Current memory address: {address}")
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    # We only have 2 instructions that loops back to 0, so we should never be at an address more than 5
+    assert address in (0, 1, 2, 3, 4, 5), (
+        f"Address was not 0-5.: {address}"
+    )
+
+    dut._log.info("Prometheus-Lite test passed!")

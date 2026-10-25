@@ -27,6 +27,15 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
+  memory ram (
+      .clk(clk),
+      .address(user_project.memory_address),
+      .memory_read_enable(user_project.memory_read_enable),
+      .memory_write_enable(user_project.memory_write_enable),
+      .write_data(user_project.memory_write_data),
+      .read_data(user_project.memory_read_data)
+  );
+
   // Replace tt_um_gatoware_prometheus_lite with your module name:
   tt_um_gatoware_prometheus_lite user_project (
 
@@ -45,5 +54,20 @@ module tb ();
       .clk    (clk),      // clock
       .rst_n  (rst_n)     // not reset
   );
+
+  // Add an instruction through this
+  `ifndef GL_TEST
+  initial begin
+      // movi a, 63
+      user_project.ram.memory[0] = 8'h00;
+      user_project.ram.memory[1] = 8'h00;
+      user_project.ram.memory[2] = 8'h3F;
+
+      // jmp 0
+      user_project.ram.memory[3] = 8'h30;
+      user_project.ram.memory[4] = 8'h00;
+      user_project.ram.memory[5] = 8'h00;
+  end
+  `endif
 
 endmodule
