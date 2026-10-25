@@ -33,7 +33,13 @@ module tt_um_gatoware_prometheus_lite (
     );
 
     `ifdef SYNTHESIS // temporary ram interface; don't try to synthesize 2kb of ram
-        assign memory_read_data = ui_in;
+        reg[7:0] read_data;
+
+        always@(posedge clk) begin
+            if(memory_read_enable) read_data <= ui_in; // inject instructions
+
+            assign memory_read_data = read_data;
+        end
     `else // use our normal ram interface if we AREN'T synthesizing
         memory ram (
             .clk(clk),
