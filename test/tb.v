@@ -61,9 +61,11 @@ module tb ();
   end
   `endif
 
+`ifndef GL_TEST
   always @(negedge clk) begin
       if (rst_n)
           $display("PC: %d, State: %d, Opcode: %h, Address: %d", user_project.cpu.value_pc, user_project.cpu.state, user_project.cpu.opcode, user_project.memory_address);
   end
+`endif
 
 endmodule
