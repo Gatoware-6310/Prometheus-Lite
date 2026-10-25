@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2026 Gatoware
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -16,16 +16,32 @@ module tt_um_gatoware_prometheus_lite (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  prometheus_lite cpu (
-      .clk(clk),
-      .reset(~rst_n)
-  );
+    wire [10:0] memory_address;
+    wire memory_read_enable;
+    wire memory_write_enable;
+    wire [7:0] memory_write_data;
+    wire [7:0] memory_read_data;
 
-  assign uo_out = 0;
-  assign uio_out = 0;
-  assign uio_oe = 0;
-  
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, ui_in, uio_in, 1'b0};
+    prometheus_lite cpu (
+        .clk(clk),
+        .reset(~rst_n)
+    );
+
+    memory ram (
+        .clk(clk),
+        .address(memory_address),
+        .memory_read_enable(memory_read_enable),
+        .memory_write_enable(memory_write_enable),
+        .write_data(memory_write_data),
+        .read_data(memory_read_data)
+    );
+
+    // This is so that optimization doesn't optimize the whole CPU out
+    assign uo_out = memory_address[7:0];
+    assign uio_out = memory_write_data;
+    assign uio_oe = 8'hFF;
+    
+    // List all unused inputs to prevent warnings
+    wire _unused = &{ena, ui_in, uio_in, 1'b0};
 
 endmodule
