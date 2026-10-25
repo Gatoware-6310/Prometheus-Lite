@@ -27,15 +27,6 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
-  memory ram (
-      .clk(clk),
-      .address(user_project.memory_address),
-      .memory_read_enable(user_project.memory_read_enable),
-      .memory_write_enable(user_project.memory_write_enable),
-      .write_data(user_project.memory_write_data),
-      .read_data(user_project.memory_read_data)
-  );
-
   // Replace tt_um_gatoware_prometheus_lite with your module name:
   tt_um_gatoware_prometheus_lite user_project (
 
@@ -69,5 +60,10 @@ module tb ();
       user_project.ram.memory[5] = 8'h00;
   end
   `endif
+
+  always @(negedge clk) begin
+      if (rst_n)
+          $display("PC: %d, State: %d, Opcode: %h, Address: %d", user_project.cpu.value_pc, user_project.cpu.state, user_project.cpu.opcode, user_project.memory_address);
+  end
 
 endmodule

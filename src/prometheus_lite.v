@@ -128,7 +128,7 @@ module prometheus_lite(
     program_counter pc(
         .clk(clk),
         .reset(reset),
-        .increment(state == REGISTER_WRITEBACK), // increment on register writeback aswell? i hope this works
+        .increment(state == REGISTER_WRITEBACK && opcode != 8'h30 && !(opcode == 8'h31 && zero)), // increment on register writeback aswell but be careful of jumps/jz
         .jump(jump_pc),
         .jump_value(jump_value_pc),
         .value(value_pc)
