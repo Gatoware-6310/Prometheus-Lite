@@ -1,2 +1,9 @@
 verilog/build/
 NOTES.md
+/tt/
+/build/
+/test/__pycache__/
+/test/results.xml
+/test/sim_build/
+/test/tb.fst
+/abc.history

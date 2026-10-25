@@ -10,9 +10,29 @@ reg reset = 0;
 
 always #5 clk = ~clk;
 
+wire [10:0] memory_address;
+wire memory_read_enable;
+wire memory_write_enable;
+wire [7:0] memory_write_data;
+wire [7:0] memory_read_data;
+
 prometheus_lite dut(
     .clk(clk),
-    .reset(reset)
+    .reset(reset),
+    .memory_address(memory_address),
+    .memory_read_enable(memory_read_enable),
+    .memory_write_enable(memory_write_enable),
+    .memory_write_data(memory_write_data),
+    .memory_read_data(memory_read_data)
+);
+
+memory ram(
+    .clk(clk),
+    .address(memory_address),
+    .memory_read_enable(memory_read_enable),
+    .memory_write_enable(memory_write_enable),
+    .write_data(memory_write_data),
+    .read_data(memory_read_data)
 );
 
 initial begin
@@ -25,7 +45,7 @@ initial begin
 
     $display("--------- Program Start ---------\n");
 
-    $readmemh("build/programs/program.bin.hex", dut.ram.memory); // Assuming you're running the makefile from the root, I mean how else would you right?
+    $readmemh("build/programs/program.bin.hex", ram.memory); // Assuming you're running the makefile from the root, I mean how else would you right?
 
     reset = 0;
     wait(0); // magic
