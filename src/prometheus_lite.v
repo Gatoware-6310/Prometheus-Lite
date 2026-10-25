@@ -1,7 +1,13 @@
 /* TOP LEVEL */
 module prometheus_lite(
     input wire clk,
-    input wire reset
+    input wire reset,
+
+    output wire [10:0] memory_address,
+    output wire memory_read_enable,
+    output wire memory_write_enable,
+    output wire [7:0] memory_write_data,
+    input wire [7:0] memory_read_data
 );
     /* Flags */
     wire zero;
@@ -34,13 +40,6 @@ module prometheus_lite(
     wire cu_memory_read_enable;
     wire cu_memory_write_enable;
     wire [7:0] cu_memory_write_data;
-
-    /* Shared RAM signals */
-    wire [7:0] memory_read_data;
-    wire [10:0] memory_address;
-    wire memory_read_enable;
-    wire memory_write_enable;
-    wire [7:0] memory_write_data;
 
     /* Program Counter stuff */
     wire jump_pc;
@@ -75,15 +74,6 @@ module prometheus_lite(
 
     assign memory_write_data = cu_memory_write_data; // just make it what the cu wants
     
-    memory ram(
-      .clk(clk),
-      .memory_read_enable(memory_read_enable),
-      .memory_write_enable(memory_write_enable && state == WRITEBACK), // && writeback just to be safe
-      .address(memory_address),
-      .write_data(memory_write_data),
-      .read_data(memory_read_data)  
-    );
-
     instruction_register ir(
         .clk(clk),
         .reset(reset),
