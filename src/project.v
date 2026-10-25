@@ -37,9 +37,9 @@ module tt_um_gatoware_prometheus_lite (
 
         always@(posedge clk) begin
             if(memory_read_enable) read_data <= ui_in; // inject instructions
-
-            assign memory_read_data = read_data;
         end
+        
+        assign memory_read_data = read_data; // this has to be outside
     `else // use our normal ram interface if we AREN'T synthesizing
         memory ram (
             .clk(clk),
