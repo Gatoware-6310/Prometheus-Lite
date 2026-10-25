@@ -143,16 +143,21 @@ initial begin
     ram.memory[60] = 8'h00;
     ram.memory[61] = 8'h00;
     ram.memory[62] = 8'h3F;
-
-    // subtract 63 from a
-    ram.memory[63] = 8'h18;
-    ram.memory[64] = 8'h00;
+    
+    // move 63 into b
+    ram.memory[63] = 8'h00;
+    ram.memory[64] = 8'h01;
     ram.memory[65] = 8'h3F;
 
-    // jump if zero flag
-    ram.memory[66] = 8'h31;
+    // compare a and b
+    ram.memory[66] = 8'h16;
     ram.memory[67] = 8'h00;
-    ram.memory[68] = 8'h00;
+    ram.memory[68] = 8'h01;
+
+    // jump if zero flag
+    ram.memory[69] = 8'h31;
+    ram.memory[70] = 8'h00;
+    ram.memory[71] = 8'h00;
 
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
@@ -239,7 +244,7 @@ initial begin
     else
         $fatal(1, "ZERO FLAG TEST %d [FAIL]", dut.zero, dut.rf.registers[3]);
 
-    wait(dut.value_pc == 60); // wait until it jumps to 0, which it will
+    wait(dut.value_pc == 60);
     @(negedge clk)
     if(dut.value_pc == 60)
         $display("JUMP TEST %d [PASS]", dut.value_pc);
@@ -249,7 +254,7 @@ initial begin
     wait(dut.value_pc == 0); // wait until it jumps to 0, which it will
     @(negedge clk)
     if(dut.value_pc == 0)
-        $display("JUMP IF ZERO TEST %d [PASS]", dut.value_pc);
+        $display("COMPARE / JUMP IF ZERO TEST %d [PASS]", dut.value_pc);
     else
         $fatal(1, "JUMP IF ZERO TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
