@@ -126,6 +126,22 @@ def assemble_instruction(instruction):
             data.append(0x19)
             data.append(get_register(operands[0]))
             data.append(get_register(operands[1]))
+        case 'and':
+            data.append(0x20)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
+        case 'or':
+            data.append(0x21)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
+        case 'xor':
+            data.append(0x22)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
+        case 'not':
+            data.append(0x23)
+            data.append(get_register(operands[0]))
+            data.append(0x00)
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:

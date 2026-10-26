@@ -57,6 +57,10 @@ module control_unit (
     localparam JZ = 8'h31;
     localparam CMP = 8'h16;
     localparam MUL = 8'h19;
+    localparam AND = 8'h20;
+    localparam OR = 8'h21;
+    localparam XOR = 8'h22;
+    localparam NOT = 8'h23;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -251,6 +255,53 @@ module control_unit (
                 write_data = data_a * data_b;
 
                 zero_next = (write_data == 0);
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            AND: begin
+                read_register_a = operand_1[1:0]; // destination
+                read_register_b = operand_2[1:0]; //source
+                write_data = data_a & data_b;
+
+                zero_next = (write_data == 0);
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            OR: begin
+                read_register_a = operand_1[1:0]; // destination
+                read_register_b = operand_2[1:0]; //source
+                write_data = data_a | data_b;
+
+                zero_next = (write_data == 0);
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            XOR: begin
+                read_register_a = operand_1[1:0]; // destination
+                read_register_b = operand_2[1:0]; //source
+                write_data = data_a ^ data_b;
+
+                zero_next = (write_data == 0);
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            NOT: begin
+                read_register_a = operand_1[1:0]; // source/destination
+                write_data = ~data_a; // one operand only
+
+                zero_next = (write_data == 0); // apparently x86 doesn't update the zero flag on NOT but let's be different
                 write_zero = 1;
 
                 write_register = operand_1[1:0];

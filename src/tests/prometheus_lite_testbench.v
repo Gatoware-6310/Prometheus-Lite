@@ -164,10 +164,40 @@ initial begin
     ram.memory[73] = 8'h00;
     ram.memory[74] = 8'h01;
 
-    // jump if zero flag
+    // jump if zero flag, to address 100
     ram.memory[75] = 8'h31;
     ram.memory[76] = 8'h00;
-    ram.memory[77] = 8'h00;
+    ram.memory[77] = 8'h64;
+
+    // move 63 into a, 10 into b
+    ram.memory[78] = 8'h00;
+    ram.memory[79] = 8'h00;
+    ram.memory[80] = 8'h3F;
+
+    ram.memory[81] = 8'h00;
+    ram.memory[82] = 8'h00;
+    ram.memory[83] = 8'h0A;
+
+    // AND
+    ram.memory[100] = 8'h20;
+    ram.memory[101] = 8'h00;
+    ram.memory[102] = 8'h01;
+
+    // OR
+    ram.memory[103] = 8'h21;
+    ram.memory[104] = 8'h00;
+    ram.memory[105] = 8'h01;
+
+    // XOR
+    ram.memory[106] = 8'h22;
+    ram.memory[107] = 8'h00;
+    ram.memory[108] = 8'h01;
+
+    // NOT
+    ram.memory[109] = 8'h23;
+    ram.memory[110] = 8'h00;
+    ram.memory[111] = 8'h00;
+
 
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
@@ -268,12 +298,19 @@ initial begin
     else
         $fatal(1, "MULTIPLY TEST %d [PASS]", dut.rf.registers[0]);
 
-    wait(dut.value_pc == 0); // wait until it jumps to 0, which it will
+    wait(dut.value_pc == 100); // wait until it jumps to 100, which it should. increments by 3, meaning it won't hit 100 naturally
     @(negedge clk)
-    if(dut.value_pc == 0)
+    if(dut.value_pc == 100)
         $display("COMPARE / JUMP IF ZERO TEST %d [PASS]", dut.value_pc);
     else
         $fatal(1, "JUMP IF ZERO TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
+    
+    wait(dut.value_pc == 112)
+    if(dut.rf.registers[0] == 255)
+        $display("AND, OR, XOR, NOT TEST %d [PASS]", dut.rf.registers[0]);
+    else
+        $fatal(1, "AND, OR, XOR, NOT TEST %d [FAIL]", dut.rf.registers[0]);
+    
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
     $finish;    
 end
