@@ -29,8 +29,8 @@
 | `0x21` | `or [destination], [source]` | [ ] |
 | `0x22` | `xor [destination], [source]` | [ ] |
 | `0x23` | `not [register]` | [ ] |
-| `0x24` | `shl [register]` | [ ] |
-| `0x25` | `shr [register]` | [ ] |
+| `0x24` | `shl [register]` | [x] |
+| `0x25` | `shr [register]` | [x] |
 | `0x30` | `jmp [address]` | [x] |
 | `0x31` | `jz [address]` | [x] |
 | `0x32` | `jnz [address]` | [ ] |

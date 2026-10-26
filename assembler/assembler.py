@@ -142,6 +142,14 @@ def assemble_instruction(instruction):
             data.append(0x23)
             data.append(get_register(operands[0]))
             data.append(0x00)
+        case 'shl':
+            data.append(0x24)
+            data.append(get_register(operands[0]))
+            data.append(0x00)
+        case 'shr':
+            data.append(0x25)
+            data.append(get_register(operands[0]))
+            data.append(0x00)
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:

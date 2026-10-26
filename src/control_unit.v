@@ -61,6 +61,9 @@ module control_unit (
     localparam OR = 8'h21;
     localparam XOR = 8'h22;
     localparam NOT = 8'h23;
+    localparam SHL = 8'h24;
+    localparam SHR = 8'h25;
+
 
     always@(*) begin
         rf_write_enable = 0;
@@ -302,6 +305,28 @@ module control_unit (
                 write_data = ~data_a; // one operand only
 
                 zero_next = (write_data == 0); // apparently x86 doesn't update the zero flag on NOT but let's be different
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            SHL: begin
+                read_register_a = operand_1[1:0]; // source/destination
+                write_data = data_a << 1; // only shift by 1. i should consider changing the isa to allow for shifts by an immediate
+
+                zero_next = (write_data == 0);
+                write_zero = 1;
+
+                write_register = operand_1[1:0];
+                rf_write_enable = 1;
+                next_state = 6;
+            end
+            SHR: begin
+                read_register_a = operand_1[1:0]; // source/destination
+                write_data = data_a << 1; // only shift by 1. i should consider changing the isa to allow for shifts by an immediate
+
+                zero_next = (write_data == 0);
                 write_zero = 1;
 
                 write_register = operand_1[1:0];

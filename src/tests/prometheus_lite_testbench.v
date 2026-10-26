@@ -198,6 +198,15 @@ initial begin
     ram.memory[110] = 8'h00;
     ram.memory[111] = 8'h00;
 
+    // SHL
+    ram.memory[112] = 8'h24;
+    ram.memory[113] = 8'h00;
+    ram.memory[114] = 8'h00;
+
+    // SHR
+    ram.memory[115] = 8'h25;
+    ram.memory[116] = 8'h00;
+    ram.memory[117] = 8'h00;
 
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
@@ -305,11 +314,11 @@ initial begin
     else
         $fatal(1, "JUMP IF ZERO TEST %d [FAIL]", dut.value_pc); // this if statement is probably useless because it'll time out if the wait doesn't work, but eh
     
-    wait(dut.value_pc == 112)
-    if(dut.rf.registers[0] == 255)
-        $display("AND, OR, XOR, NOT TEST %d [PASS]", dut.rf.registers[0]);
+    wait(dut.value_pc == 118)
+    if(dut.rf.registers[0] == 127)
+        $display("AND, OR, XOR, NOT, SHL, SHR TEST %d [PASS]", dut.rf.registers[0]);
     else
-        $fatal(1, "AND, OR, XOR, NOT TEST %d [FAIL]", dut.rf.registers[0]);
+        $fatal(1, "AND, OR, XOR, NOT, SHL, SHR TEST %d [FAIL]", dut.rf.registers[0]);
     
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
     $finish;    
