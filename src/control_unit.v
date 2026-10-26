@@ -55,6 +55,7 @@ module control_unit (
     localparam SUBI = 8'h18;
     localparam JMP = 8'h30;
     localparam JZ = 8'h31;
+    localparam CMP = 8'h16;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -232,6 +233,15 @@ module control_unit (
                     jump_pc = 1;
                     jump_value_pc = {operand_1[2:0], operand_2};
                 end
+                next_state = 6;
+            end
+            CMP: begin
+                read_register_a = operand_1[1:0]; // num1
+                read_register_b = operand_2[1:0]; // num2
+                
+                zero_next = (data_a - data_b == 0);
+                write_zero = 1;
+                
                 next_state = 6;
             end
             default: begin
