@@ -118,6 +118,14 @@ def assemble_instruction(instruction):
             movabcd(0x30, operands[0]) # We can actually reuse this for jump because it's the same opcode/operand format
         case 'jz':
             movabcd(0x31, operands[0]) # We can actually reuse this for jump because it's the same opcode/operand format
+        case 'cmp':
+            data.append(0x16)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
+        case 'mul':
+            data.append(0x19)
+            data.append(get_register(operands[0]))
+            data.append(get_register(operands[1]))
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:

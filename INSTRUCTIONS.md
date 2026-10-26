@@ -24,7 +24,7 @@
 | `0x16` | `cmp [destination], [source]` | [x] |
 | `0x17` | `addi [register], [immediate]` | [x] |
 | `0x18` | `subi [register], [immediate]` | [x] |
-| `0x19` | `mul [destination], [source]` | [ ] |
+| `0x19` | `mul [destination], [source]` | [x] |
 | `0x20` | `and [destination], [source]` | [ ] |
 | `0x21` | `or [destination], [source]` | [ ] |
 | `0x22` | `xor [destination], [source]` | [ ] |
