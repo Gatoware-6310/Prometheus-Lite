@@ -324,7 +324,7 @@ module control_unit (
             end
             SHR: begin
                 read_register_a = operand_1[1:0]; // source/destination
-                write_data = data_a << 1; // only shift by 1. i should consider changing the isa to allow for shifts by an immediate
+                write_data = data_a >> 1; // only shift by 1. i should consider changing the isa to allow for shifts by an immediate
 
                 zero_next = (write_data == 0);
                 write_zero = 1;
