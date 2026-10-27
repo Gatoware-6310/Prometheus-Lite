@@ -118,6 +118,8 @@ def assemble_instruction(instruction):
             movabcd(0x30, operands[0]) # We can actually reuse this for jump because it's the same opcode/operand format
         case 'jz':
             movabcd(0x31, operands[0]) # We can actually reuse this for jump because it's the same opcode/operand format
+        case 'jnz':
+            movabcd(0x32, operands[0]) # We can actually reuse this for jump because it's the same opcode/operand format
         case 'cmp':
             data.append(0x16)
             data.append(get_register(operands[0]))

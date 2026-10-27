@@ -25,10 +25,10 @@
 | `0x17` | `addi [register], [immediate]` | [x] |
 | `0x18` | `subi [register], [immediate]` | [x] |
 | `0x19` | `mul [destination], [source]` | [x] |
-| `0x20` | `and [destination], [source]` | [ ] |
-| `0x21` | `or [destination], [source]` | [ ] |
-| `0x22` | `xor [destination], [source]` | [ ] |
-| `0x23` | `not [register]` | [ ] |
+| `0x20` | `and [destination], [source]` | [x] |
+| `0x21` | `or [destination], [source]` | [x] |
+| `0x22` | `xor [destination], [source]` | [x] |
+| `0x23` | `not [register]` | [x] |
 | `0x24` | `shl [register]` | [x] |
 | `0x25` | `shr [register]` | [x] |
 | `0x30` | `jmp [address]` | [x] |
