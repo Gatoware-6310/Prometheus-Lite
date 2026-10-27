@@ -208,6 +208,12 @@ initial begin
     ram.memory[116] = 8'h00;
     ram.memory[117] = 8'h00;
 
+    // JNZ
+    ram.memory[118] = 8'h32;
+    ram.memory[119] = 8'h00;
+    ram.memory[120] = 8'h97; // this should jump to 150
+    
+
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
 
@@ -319,6 +325,14 @@ initial begin
         $display("AND, OR, XOR, NOT, SHL, SHR TEST %d [PASS]", dut.rf.registers[0]);
     else
         $fatal(1, "AND, OR, XOR, NOT, SHL, SHR TEST %d [FAIL]", dut.rf.registers[0]);
+
+    wait(dut.value_pc == 151); // it won't hit this naturally
+    @(negedge clk)
+    if(dut.value_pc == 151)
+        $display("JUMP IF NOT ZERO TEST %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP IF NOT ZERO TEST %d [FAIL]", dut.value_pc); // same same
+
     
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
     $finish;    
@@ -326,7 +340,7 @@ end
 
 initial begin
     #1000000;
-    $fatal(1, "TEST TIMEOUT");
+    $fatal(1, "TEST TIMEOUT. PC: %d, ZERO: %d", dut.value_pc, dut.zero);
 end
 
 endmodule

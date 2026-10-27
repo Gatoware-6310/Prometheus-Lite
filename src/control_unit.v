@@ -63,6 +63,7 @@ module control_unit (
     localparam NOT = 8'h23;
     localparam SHL = 8'h24;
     localparam SHR = 8'h25;
+    localparam JNZ = 8'h32;
 
 
     always@(*) begin
@@ -238,6 +239,13 @@ module control_unit (
             end
             JZ: begin
                 if(zero) begin
+                    jump_pc = 1;
+                    jump_value_pc = {operand_1[2:0], operand_2};
+                end
+                next_state = 6;
+            end
+            JNZ: begin
+                if(!zero) begin // this should be it?
                     jump_pc = 1;
                     jump_value_pc = {operand_1[2:0], operand_2};
                 end

@@ -33,7 +33,7 @@
 | `0x25` | `shr [register]` | [x] |
 | `0x30` | `jmp [address]` | [x] |
 | `0x31` | `jz [address]` | [x] |
-| `0x32` | `jnz [address]` | [ ] |
+| `0x32` | `jnz [address]` | [x] |
 | `0x33` | `jc [address]` | [ ] |
 | `0x34` | `jnc [address]` | [ ] |
 | `0x35` | `jmpab` | [ ] |
