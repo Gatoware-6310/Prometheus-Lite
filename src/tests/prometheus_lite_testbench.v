@@ -211,8 +211,21 @@ initial begin
     // JNZ
     ram.memory[118] = 8'h32;
     ram.memory[119] = 8'h00;
-    ram.memory[120] = 8'h97; // this should jump to 150
-    
+    ram.memory[120] = 8'h97; // this should jump to 151
+
+    // move 182 into ab
+    ram.memory[151] = 8'h00;
+    ram.memory[152] = 8'h00;
+    ram.memory[153] = 8'h00;
+
+    ram.memory[154] = 8'h00;
+    ram.memory[155] = 8'h01;
+    ram.memory[156] = 8'hB6;
+
+    // JMPP ab, to 182
+    ram.memory[157] = 8'h35;
+    ram.memory[158] = 8'h00;
+    ram.memory[159] = 8'h00;
 
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
@@ -333,6 +346,12 @@ initial begin
     else
         $fatal(1, "JUMP IF NOT ZERO TEST %d [FAIL]", dut.value_pc); // same same
 
+    wait(dut.value_pc == 182); // same same
+    @(negedge clk)
+    if(dut.value_pc == 182)
+        $display("JUMP FROM POINTER IN REGISTER PAIR %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP FROM POINTER IN REGISTER PAIR %d [FAIL]", dut.value_pc); // same same x2
     
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
     $finish;    

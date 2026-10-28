@@ -64,6 +64,7 @@ module control_unit (
     localparam SHL = 8'h24;
     localparam SHR = 8'h25;
     localparam JNZ = 8'h32;
+    localparam JMPP = 8'h35;
 
 
     always@(*) begin
@@ -339,6 +340,19 @@ module control_unit (
 
                 write_register = operand_1[1:0];
                 rf_write_enable = 1;
+                next_state = 6;
+            end
+            JMPP: begin
+                if(operand_1 == 0) begin
+                    read_register_a = 8'h00;
+                    read_register_b = 8'h01;
+                end else begin
+                    read_register_a = 8'h02;
+                    read_register_b = 8'h03;
+                end
+                
+                jump_pc = 1;
+                jump_value_pc = {data_a[2:0], data_b};
                 next_state = 6;
             end
             default: begin

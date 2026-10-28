@@ -227,8 +227,7 @@ And;
 | `0x32` | `jnz addr` | Jump if Z = 0 |
 | `0x33` | `jc addr` | Jump if C = 1 |
 | `0x34` | `jnc addr` | Jump if C = 0 |
-| `0x35` | `jmpab` | Jump to the address in AB |
-| `0x36` | `jmpcd` | Jump to the address in CD |
+| `0x35` | `jmpp pair` | Jump to the address in the register pair |
 
 ### 5.5 Stack and calling
 

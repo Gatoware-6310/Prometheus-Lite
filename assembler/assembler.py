@@ -152,6 +152,10 @@ def assemble_instruction(instruction):
             data.append(0x25)
             data.append(get_register(operands[0]))
             data.append(0x00)
+        case 'jmpp':
+            data.append(0x35)
+            data.append(get_pair(operands[0]))
+            data.append(0x00)
         case 'nop':
             pass # TODO: Implement later, this is for testing single word instructions
         case _:
