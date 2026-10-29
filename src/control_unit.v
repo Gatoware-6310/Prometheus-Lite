@@ -74,6 +74,8 @@ module control_unit (
     localparam JMPP = 8'h35;
     localparam PUSH = 8'h40;
     localparam POP = 8'h41;
+    localparam NOP = 8'h52;
+    localparam HLT = 8'h53;
 
 
     always@(*) begin
@@ -383,6 +385,12 @@ module control_unit (
                 memory_read_enable = 1;
                 write_register = operand_1[1:0];
                 write_data = memory_read_data;
+            end
+            NOP: begin
+                next_state = 6; // just skip to incrementing the pc
+            end
+            HLT: begin
+                next_state = 7; // stay here forever!
             end
             default: begin
                 // illegal instruction! maybe an exception register later?

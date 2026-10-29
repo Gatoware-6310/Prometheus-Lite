@@ -165,7 +165,13 @@ def assemble_instruction(instruction):
             data.append(get_register(operands[0]))
             data.append(0x00)
         case 'nop':
-            pass # TODO: Implement later, this is for testing single word instructions
+            data.append(0x52)
+            data.append(0x00)
+            data.append(0x00)
+        case 'hlt':
+            data.append(0x53)
+            data.append(0x00)
+            data.append(0x00)
         case _:
             raise_error("Illegal instruction encountered: " + opcode)
             return

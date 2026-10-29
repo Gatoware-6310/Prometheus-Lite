@@ -37,11 +37,11 @@
 | `0x33` | `jc [address]` | [ ] |
 | `0x34` | `jnc [address]` | [ ] |
 | `0x35` | `jmpp` | [x] |
-| `0x40` | `push [register]` | [ ] |
-| `0x41` | `pop [register]` | [ ] |
+| `0x40` | `push [register]` | [x] |
+| `0x41` | `pop [register]` | [x] |
 | `0x42` | `call [address]` | [ ] |
 | `0x43` | `ret` | [ ] |
 | `0x50` | `clc` | [ ] |
 | `0x51` | `sec` | [ ] |
-| `0x52` | `nop` | [ ] |
-| `0x53` | `hlt` | [ ] |
+| `0x52` | `nop` | [x] |
+| `0x53` | `hlt` | [x] |

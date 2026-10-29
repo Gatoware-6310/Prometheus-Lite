@@ -257,6 +257,10 @@ initial begin
     ram.memory[198] = 8'h03;
     ram.memory[199] = 8'h00;
 
+    ram.memory[200] = 8'h53;
+    ram.memory[201] = 8'h00;
+    ram.memory[202] = 8'h00;
+
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
 
@@ -389,6 +393,10 @@ initial begin
         $display("PUSH/POP STACK TEST %d %d [PASS]", dut.rf.registers[2], dut.rf.registers[3]);
     else
         $fatal(1, "PUSH/POP STACK TEST %d %d [PASS]", dut.rf.registers[2], dut.rf.registers[3]);
+    
+    wait(dut.state == 7); // wait till halted
+    $display("HALT TEST [PASS]"); // there's no way we get here unless it's halted so i'm just gonna be lazy
+
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
     $finish;    
 end
