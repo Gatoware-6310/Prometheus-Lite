@@ -1,6 +1,7 @@
 module control_unit (
     input wire clk,
     input wire enable,
+    input wire reset,
 
     /* Flags */
     output reg zero,
@@ -377,6 +378,8 @@ module control_unit (
 
     // for flags/sp to write at the same time
     always @(posedge clk) begin
+        if (reset) // not clean, but we're doing this because we can't reset in the top level and i don't wanna do a bunch of janky sp_next stuff
+            stack_pointer <= 11'h7FF;
         if (enable) begin
             if (write_zero)
                 zero <= zero_next;
