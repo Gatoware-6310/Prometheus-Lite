@@ -144,6 +144,7 @@ module prometheus_lite(
             state <= FETCH_A;
             fetch_address <= 0;
             fetch_read_enable <= 1;
+            stack_pointer <= 11'h7FF;
         end else begin
             case(state)
                 FETCH_A: begin
