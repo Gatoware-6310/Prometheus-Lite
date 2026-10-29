@@ -365,10 +365,19 @@ module control_unit (
                 next_state = 6;
             end
             PUSH: begin
-                
+                read_register_a = operand_1[1:0]; // get the data to push
+                memory_write_enable = 1;
+                memory_address = stack_pointer;
+                memory_write_data = data_a;
+                stack_pointer = stack_pointer - 1; // decrement the stack last (empty descending stack)
             end
             POP: begin
-
+                stack_pointer = stack_pointer + 1; // increment first
+                rf_write_enable = 1;
+                memory_address = stack_pointer;
+                memory_read_enable = 1;
+                write_register = operand_1[1:0];
+                write_data = memory_read_data;
             end
             default: begin
                 // illegal instruction! maybe an exception register later?
@@ -380,7 +389,7 @@ module control_unit (
     always @(posedge clk) begin
         if (reset) // not clean, but we're doing this because we can't reset in the top level and i don't wanna do a bunch of janky sp_next stuff
             stack_pointer <= 11'h7FF;
-        if (enable) begin
+        else if (enable) begin
             if (write_zero)
                 zero <= zero_next;
             if (write_sp)

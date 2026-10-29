@@ -227,6 +227,36 @@ initial begin
     ram.memory[158] = 8'h00;
     ram.memory[159] = 8'h00;
 
+    // move 63 into a
+    ram.memory[182] = 8'h00;
+    ram.memory[183] = 8'h00;
+    ram.memory[184] = 8'h3F;
+
+    // push a (63)
+    ram.memory[185] = 8'h40;
+    ram.memory[186] = 8'h00;
+    ram.memory[187] = 8'h00;
+
+    // move 99 into b
+    ram.memory[188] = 8'h00;
+    ram.memory[189] = 8'h01;
+    ram.memory[190] = 8'h63;
+
+    // push b (99)
+    ram.memory[191] = 8'h40;
+    ram.memory[192] = 8'h01;
+    ram.memory[193] = 8'h00;
+
+    // pop into c (should be 99)
+    ram.memory[194] = 8'h41;
+    ram.memory[195] = 8'h02;
+    ram.memory[196] = 8'h00;
+
+    // pop into d (should be 63)
+    ram.memory[197] = 8'h41;
+    ram.memory[198] = 8'h03;
+    ram.memory[199] = 8'h00;
+
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
 
@@ -352,7 +382,13 @@ initial begin
         $display("JUMP FROM POINTER IN REGISTER PAIR %d [PASS]", dut.value_pc);
     else
         $fatal(1, "JUMP FROM POINTER IN REGISTER PAIR %d [FAIL]", dut.value_pc); // same same x2
-    
+
+    wait(dut.value_pc == 200);
+    @(negedge clk)
+    if(dut.rf.registers[2] == 99 && dut.rf.registers[3] == 63)
+        $display("PUSH/POP STACK TEST %d %d [PASS]", dut.rf.registers[2], dut.rf.registers[3]);
+    else
+        $fatal(1, "PUSH/POP STACK TEST %d %d [PASS]", dut.rf.registers[2], dut.rf.registers[3]);
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
     $finish;    
 end
