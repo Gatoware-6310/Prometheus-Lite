@@ -97,6 +97,9 @@ module control_unit (
         jump_pc = 0;
         jump_value_pc = 0;
 
+        sp_next = stack_pointer;
+        write_sp = 0;
+
         case(opcode)
             MOVI: begin // MOVE IMMEDIATE, 0x0, movi [reg], [immediate]
                 rf_write_enable = 1;
@@ -369,10 +372,12 @@ module control_unit (
                 memory_write_enable = 1;
                 memory_address = stack_pointer;
                 memory_write_data = data_a;
-                stack_pointer = stack_pointer - 1; // decrement the stack last (empty descending stack)
+                sp_next = stack_pointer - 1; // decrement the stack last (empty descending stack)
+                write_sp = 1;
             end
             POP: begin
-                stack_pointer = stack_pointer + 1; // increment first
+                sp_next = stack_pointer + 1; // increment first
+                write_sp = 1;
                 rf_write_enable = 1;
                 memory_address = stack_pointer;
                 memory_read_enable = 1;
