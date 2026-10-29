@@ -25,6 +25,9 @@ module control_unit (
     output reg rf_write_enable,
     output reg[1:0] write_register,
     output reg[7:0] write_data,
+
+    /* STACK STUFF */
+    output reg[10:0] stack_pointer,
     
     /* MEMORY STUFF */
     output reg memory_read_enable,
@@ -36,6 +39,9 @@ module control_unit (
 
     reg zero_next;
     reg write_zero;
+
+    reg[10:0] sp_next;
+    reg write_sp;
 
     localparam MOVI = 8'h00;
     localparam MOVR = 8'h01;
@@ -65,6 +71,8 @@ module control_unit (
     localparam SHR = 8'h25;
     localparam JNZ = 8'h32;
     localparam JMPP = 8'h35;
+    localparam PUSH = 8'h40;
+    localparam POP = 8'h41;
 
 
     always@(*) begin
@@ -355,16 +363,26 @@ module control_unit (
                 jump_value_pc = {data_a[2:0], data_b};
                 next_state = 6;
             end
+            PUSH: begin
+                
+            end
+            POP: begin
+
+            end
             default: begin
                 // illegal instruction! maybe an exception register later?
             end
         endcase
     end
 
-    // for flags to happen at the same time
+    // for flags/sp to write at the same time
     always @(posedge clk) begin
-        if (enable && write_zero)
-            zero <= zero_next;
+        if (enable) begin
+            if (write_zero)
+                zero <= zero_next;
+            if (write_sp)
+                stack_pointer <= sp_next; 
+        end
     end
 
 endmodule

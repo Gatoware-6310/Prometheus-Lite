@@ -31,6 +31,9 @@ module prometheus_lite(
     wire[7:0] data_b;
     wire[7:0] data_c;
 
+    /* Stack Pointer */
+    reg[10:0] stack_pointer;
+
     /* Fetch signals */
     reg [10:0] fetch_address;
     reg fetch_read_enable;
@@ -108,7 +111,8 @@ module prometheus_lite(
         .next_state(next_state),
         .zero(zero),
         .jump_pc(jump_pc),
-        .jump_value_pc(jump_value_pc)
+        .jump_value_pc(jump_value_pc),
+        .stack_pointer(stack_pointer)
     );
 
     register_file rf(

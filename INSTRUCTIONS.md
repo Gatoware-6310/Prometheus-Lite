@@ -36,7 +36,7 @@
 | `0x32` | `jnz [address]` | [x] |
 | `0x33` | `jc [address]` | [ ] |
 | `0x34` | `jnc [address]` | [ ] |
-| `0x35` | `jmpp` | [ ] |
+| `0x35` | `jmpp` | [x] |
 | `0x40` | `push [register]` | [ ] |
 | `0x41` | `pop [register]` | [ ] |
 | `0x42` | `call [address]` | [ ] |
