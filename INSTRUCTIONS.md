@@ -16,9 +16,7 @@
 | `0x0A` | `movp [destination], [pair]` | [x] |
 | `0x0B` | `movfp [pair], [source]` | [x] |
 | `0x10` | `add [destination], [source]` | [x] |
-| `0x11` | `adc [destination], [source]` | [ ] |
 | `0x12` | `sub [destination], [source]` | [x] |
-| `0x13` | `sbc [destination], [source]` | [ ] |
 | `0x14` | `inc (ASSEMBLER MACRO) [register]` | [x] |
 | `0x15` | `dec (ASSEMBLER MACRO) [register]` | [x] |
 | `0x16` | `cmp [destination], [source]` | [x] |
@@ -34,14 +32,8 @@
 | `0x30` | `jmp [address]` | [x] |
 | `0x31` | `jz [address]` | [x] |
 | `0x32` | `jnz [address]` | [x] |
-| `0x33` | `jc [address]` | [ ] |
-| `0x34` | `jnc [address]` | [ ] |
 | `0x35` | `jmpp` | [x] |
 | `0x40` | `push [register]` | [x] |
 | `0x41` | `pop [register]` | [x] |
-| `0x42` | `call [address]` | [ ] |
-| `0x43` | `ret` | [ ] |
-| `0x50` | `clc` | [ ] |
-| `0x51` | `sec` | [ ] |
 | `0x52` | `nop` | [x] |
 | `0x53` | `hlt` | [x] |
