@@ -74,7 +74,7 @@ module prometheus_lite(
         fetching ? fetch_read_enable : cu_memory_read_enable; // if we're fetching, fetch if read enable is true, otherwise follow the cu
 
     assign memory_write_enable =
-        !fetching && (state == WRITEBACK || state == EXECUTE) && cu_memory_write_enable; // only enable writes if we're not fetching, the state is writeback, and the cu wants to write.
+        !fetching && (state == EXECUTE || (state == WRITEBACK && opcode != 8'h40)) && cu_memory_write_enable; // only enable writes if we're not fetching, the state is writeback, and the cu wants to write. also fix a stack bug
 
     assign memory_write_data = cu_memory_write_data; // just make it what the cu wants
     

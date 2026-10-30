@@ -12,8 +12,6 @@ Prometheus Lite will have:
 - Fixed 24 bit (3 byte) instruction width
 - 4 general purpose registers (A, B, C, and D)
 - 2 register pairs for pointers and 16 bit values (AB and CD)
-- A 256 byte downward stack (8 bit stack pointer)
-- A Zero flag (Z) and a Carry flag (C)
 - Big Endian ordering for 16 bit operands in some instructions
 - No native signed integer support!
 
@@ -41,6 +39,8 @@ Two big endian 16 bit register pairs are available.
 
 Register pairs are not additional storage, they are simply the value of two registers concateated.
 
+Addresses are 11 bits (`0x000` to `0x7FF`). For pointers, only the lowest 3 bits of the first register in a pair are used.
+
 ### Super Secret Special registers
 
 **Program Counter**
@@ -50,12 +50,6 @@ Register pairs are not additional storage, they are simply the value of two regi
 - Can be modified by jumps of any kind
 - 11 bit!
 
-**Stack Pointer**
-
-- 8 bit register
-- Resets to `0xFF`
-- Grows downward
-- Occupies `0x0000` to `0x00FF` in order to work with basically any memory limit
 
 **Instruction Register**
 
@@ -91,10 +85,6 @@ Machine code: `00 00 2A`
 
 Machine code: `00 03 FF`
 
-`mova 0x1234`
-
-Machine code: `02 12 34`
-
 `add a, b`
 
 Machine code: `10 00 01`
@@ -103,18 +93,11 @@ Machine code: `10 00 01`
 
 Machine code: `19 00 01`
 
-`jmp 0x4000`
-
-Machine code: `30 40 00`
-
 ## 4. Processor flags
-
-The CPU implements two flags.
 
 | Flag | Description |
 |---|---|
 | Z | Zero flag |
-| C | Carry flag |
 
 ### Zero flag (Z)
 
@@ -123,47 +106,9 @@ Set when an instruction that updates flags produces a result equal to zero. For 
 - `Z = 1`: The result was zero
 - `Z = 0`: the result was not zero
 
-### Carry flag (C)
+`add`, `sub`, `addi`, `subi`, `cmp`, `mul`, `and`, `or`, `xor`, `not`, `shl`, and `shr` update Z. `inc` and `dec` update it too!
 
-Used for unsigned multi-byte operations;
-
-**Addition:**
-
-- `C = 1` when the result exceeds 255
-- `C = 0` when the result does not exceed 255
-
-**Subtraction:**
-
-- `C = 1` when no borrow occurs
-- `C = 0` when a borrow occurs
-
-**Increment:**
-
-- `C = 1` when incrementing `0xFF` to `0x00`
-- `C = 0` when... not doing that
-
-**Decrement:**
-
-- `C = 1` when decrementing `0x00` to `0xFF`
-- `C = 0` I think you get the gist of it
-
-**Shifts:**
-
-- C receives the bit shifted out of the register.
-
-### Flag modification table
-
-| Instructions                | Zero Flag (Z)             | Carry Flag (C)                       |
-| --------------------------- | ------------------------- | ------------------------------------ |
-| `add`, `addi`, `adc`        | Set only if the result is zero | Set if the addition produces a carry |
-| `sub`, `subi`, `sbc`, `cmp` | Set only if the result is zero | Set if no borrow was needed          |
-| `mul`                       | Set only if the result is zero | Set if the product exceeds 255 |
-| `inc`                       | Set only if the result is zero | Set if incrementing 255 |
-| `dec`                       | Set only if the result is zero | Set if decrementing 0 |
-| `and`, `or`, `xor`, `not`   | Set only if the result is zero | Not affected                         |
-| `shl`, `shr`                | Set only if the result is zero | Stores the bit that was shifted out  |
-| `clc`                       | Not affected              | Cleared to 0                         |
-| `sec`                       | Not affected              | Set to 1                             |
+Z isn’t explicitly reset. For `mul`, Z is based on the low 8 bits of the result.
 
 ## 5. Instruction set
 
@@ -186,10 +131,6 @@ Used for unsigned multi-byte operations;
 
 For example;
 
-`mova 0x1234` loads the byte at address `0x1234` into A, `movfa 0x1234` stores A at address `0x1234`,
-
-And;
-
 `movp c, ab` loads the byte at the address held in AB into C, `movfp ab, c` stores C at the address held in AB.
 
 ### 5.2 Arithmetic
@@ -197,11 +138,9 @@ And;
 | Opcode | Instruction | Description |
 |---|---|---|
 | `0x10` | `add dst, src` | Add source register |
-| `0x11` | `adc dst, src` | Add source register with carry |
 | `0x12` | `sub dst, src` | Subtract source register |
-| `0x13` | `sbc dst, src` | Subtract source register with borrow |
-| `0x14` | `inc r` | Increment register |
-| `0x15` | `dec r` | Decrement register |
+| Macro | `inc r` | Increment register (assembled as `addi r, 1`) |
+| Macro | `dec r` | Decrement register (assembled as `subi r, 1`) |
 | `0x16` | `cmp dst, src` | Compare registers |
 | `0x17` | `addi r, imm` | Add immediate value |
 | `0x18` | `subi r, imm` | Subtract immediate value |
@@ -225,47 +164,33 @@ And;
 | `0x30` | `jmp addr` | Unconditional jump |
 | `0x31` | `jz addr` | Jump if Z = 1 |
 | `0x32` | `jnz addr` | Jump if Z = 0 |
-| `0x33` | `jc addr` | Jump if C = 1 |
-| `0x34` | `jnc addr` | Jump if C = 0 |
 | `0x35` | `jmpp pair` | Jump to the address in the register pair |
 
-### 5.5 Stack and calling
+### 5.5 Stack
 
 | Opcode | Instruction | Description |
 |---|---|---|
 | `0x40` | `push r` | Push the register onto stack |
 | `0x41` | `pop r` | Pop a byte from the stack into the register |
-| `0x42` | `call addr` | Call a function |
-| `0x43` | `ret` | Return from the function |
 
-**PUSH**
+SP is 11 bits, resets to `0x7FF`, and grows downward.
 
-Decrements SP by 1, and *then* stores the value at the address of SP.
-
-**POP**
-
-Reads the memory from address SP into the destination register, and *then* increments SP by 1.
-
-`call`/`ret` do not save flags.
+`push` stores at SP, then decrements it. `pop` increments SP, then reads from it.
 
 ### 5.6 Flag/system operations
 
 | Opcode | Instruction | Description |
 |---|---|---|
-| `0x50` | `clc` | Clear the carry flag |
-| `0x51` | `sec` | Set the carry flag to 1 |
 | `0x52` | `nop` | Nothing! |
 | `0x53` | `hlt` | Stops execution |
 
 ## 6. Instruction execution and PC behavior
 
-The program counter is 16 bits wide.
-
-During normal execution, the program counter is incremented by **3** every clock.
-
-If the PC ever overflows, it is reset to 0.
+The program counter is 11 bits wide. During normal execution, it advances by **3** during register writeback. If it’s `0x7FD` or higher when incremented, it resets to 0.
 
 ## 7. Assembly examples
+
+The assembler accepts decimal immediates and numeric addresses. It doesn’t support blank lines, comments, or labels yet!
 
 ### Load an immediate
 
@@ -287,87 +212,24 @@ mul a, b
 hlt
 ```
 
-`A` contains the result of the product (120). `Z` is set if that result is zero, and `C` is set if the result exceeds 255.
+`A` contains the result of the product (120). `Z` is set if that result is zero.
 
 ### Load from memory
 
-```asm
-mova 0x1234
-```
-
-`A` receives the byte stored at address `0x1234`.
+`mova 0x234` loads the byte at address `0x234` into A.
 
 ### Indirect memory access
 
 ```asm
-movi a, 0x40
-movi b, 0x80
-
+movi a, 4
+movi b, 128
 movp c, ab
 ```
 
-`C` receives the byte stored at address `0x4080`.
-
-### Increment a 16-bit pointer
-
-```asm
-inc b
-jnc done
-inc a
-
-done:
-```
-
-If `B` overflows, `A` is incremented.
-
-### Unsigned comparison
-
-```asm
-movi a, 10
-movi b, 20
-
-cmp a, b
-jc greater_or_equal
-
-hlt
-
-greater_or_equal:
-    nop
-    hlt
-```
-
-Because 10 is less than 20, `C` is cleared and the jump is not taken.
-
-### 16-bit addition
-
-```asm
-; AB = first 16 bit number
-; CD = second 16 bit number
-
-clc
-adc b, d
-adc a, c
-```
-
-The 16 bit result is stored in `AB`.
-
-### Subroutine call
-
-```asm
-movi a, 10
-call double
-hlt
-
-double:
-    add a, a
-    ret
-```
-
-`A` contains 20 after the subroutine returns.
+`C` receives the byte stored at address `0x480`.
 
 ## NOTES
-- Prometheus Lite is now a multi cycle CPU, with FETCH_A, FETCH_B, FETCH_C, FETCH_C_WAIT, EXECUTE, WRITEBACK, and REGISTER_WRITEBACK cycles
-- Instructions that read memory and write to registers will read from memory first (on the EXECUTE cycle), then write during the REGISTER_WRITEBACK cycle. Otherwise, they can write during EXECUTE. Similar story with WRITEBACK (memory writeback). This depends on instruction implementation!
+- Prometheus Lite is now a multi cycle CPU, with FETCH_A, FETCH_B, FETCH_C, FETCH_C_WAIT, EXECUTE, WRITEBACK, REGISTER_WRITEBACK, and HALT cycles
 ## The end!
 
 **Prometheus Lite ISA v1.0**
