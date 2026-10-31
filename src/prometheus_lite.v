@@ -25,7 +25,6 @@ module prometheus_lite(
     wire[1:0] read_register_c;
     wire[1:0] write_register;
     wire[7:0] write_data;
-    wire[7:0] alu_opcode;
     // Register file outputs
     wire[7:0] data_a;
     wire[7:0] data_b;
