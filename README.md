@@ -196,10 +196,25 @@ According to Hackatime, I spent around 28 hours in total on this project specifi
 
 Although, I don’t think hackatime is accounting for *everything*. I’d say I spent about 5-6 hours more in total just designing the CPU in my head, thinking about the ISA, even writing this document explaining it - bringing the final count up to a rough estimate of about 32 and a half hours.
 
+## What I Learned and Where I Went Wrong
+
+Throughout my time developing Prometheus Lite, I seriously refined my knowledge on exactly how computers work at the lowest level - the added constraint of not vibecoding whatsoever made it much more fun, drawn out, and educational than I initially anticipated, and even rekindled my love for programming entirely on my own in a way. 
+
+That being said, the development cycle was not without its failures. Since this was technically my first Verilog design, I consistently (especially in the early stages) had to fight through millions of confusing syntax errors (my Verilog linter in VSCode is a bit broken) only to find that a test was failing anyway. It took me a long time to debug these sorts of errors, but I got through it. 
+
+Despite that, the feeling of victory when I finally realized what was going wrong or exactly how to make something work that I'd been staring at for an hour always outweighed the failures. Now, I've had similar feelings for almost all of my other projects, but this one is different. I think that this is by far the hardest thing I've ever done, my greatest accomplishment, and the culmination of all my CS related efforts thus far. 
+
+In summary, I learned a lot from the development of Prometheus Lite, including exactly what makes a computer tick, how to write Verilog, and exactly how chip design works internally, a point I never thought that I would reach myself!
+
 ## Conclusion, Notes and Next Steps
 
 - This design is absolutely not final, but I’ve done pretty much everything I can in digital simulations for now. At this point, I’m going to submit the project, and refine it/add more features/optimize it as soon as I get the FPGA.
 
 - I want to add a way to interface with external devices, so, inspired by x86, I will likely implement in/out instructions once I get the FPGA and everything related to the actual ASIC is finalized.
 
-Thank you for reading!
+- On the final ASIC design, I intend to add some silicon art. I've done research, and Tiny Tapeout seems to support it!
+
+- This design **does** work with GTKWave, and produces the expected signals, as shown below.
+  ![Prometheus Lite GTKWave simulation](docs/images/gtkwave.png)
+
+Thank you for reading!!!!

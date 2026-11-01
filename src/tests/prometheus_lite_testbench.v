@@ -479,6 +479,12 @@ initial begin
 end
 
 initial begin
+    // dump it!
+    $dumpfile("build/gtkwave/dump.vcd");
+    $dumpvars(0, prometheus_lite_testbench);
+end
+
+initial begin
     #1000000;
     $fatal(1, "TEST TIMEOUT. PC: %d, ZERO: %d", dut.value_pc, dut.zero);
 end
