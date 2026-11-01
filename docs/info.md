@@ -9,16 +9,13 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-iodjqwoujqwouefjqwef
-
+.
 
 ## How to test
 
-weifjqwouejfowqejfouqwef
-
+.
 ## External hardware
 
-qwejfuqwehfouqwejfuoqwefuo
+.
 
-
-check the readme!!!!
+IMPORTANT NOTE: This datasheet is currently a placeholder. The final hardware, sram integration, and many other asic specific behaviours are still VERY MUCH subject to change. Because of this, please visit the write up/README at the project root for full technical documentation. This datasheet will be completed once I recieve the FPGA to test on and other interfaces/specific behaviour are fully established.
