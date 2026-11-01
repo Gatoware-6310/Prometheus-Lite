@@ -19,3 +19,6 @@ weifjqwouejfowqejfouqwef
 ## External hardware
 
 qwejfuqwehfouqwejfuoqwefuo
+
+
+check the readme!!!!
