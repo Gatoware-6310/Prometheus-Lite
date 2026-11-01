@@ -6,7 +6,7 @@
 
 Prometheus Lite is a custom 8-bit CPU designed and written entirely from scratch in Verilog, and entirely without AI. I started this project intending to take my passion for Computer Science one step further - creating a computer that would actually be manufactured in silicon. I have actually created CPU’s before, Prometheus-1 and Prometheus-2.1 both preceded Prometheus Lite, but both were largely AI assisted and not truly *mine* (on that note, Prometheus Lite doubles as my introduction to Verilog, so the code might not be very good by traditional standards).
 
-Source code can be found at [https://github.com/Gatoware-6310/Prometheus-Lite/](https://github.com/Gatoware-6310/Prometheus-Lite/)
+Source code and the latest (passing!) workflows can be found at [https://github.com/Gatoware-6310/Prometheus-Lite/](https://github.com/Gatoware-6310/Prometheus-Lite/)
 
 ## Architecture
 
@@ -44,9 +44,9 @@ Prometheus Lite features two native register pairs, ab, and cd. Register pairs a
 
 The instructions that use register pairs are:
 
-`movp [pair], [destination register]` This instruction will move the value pointed to by the register pair into the selected register.
+`movp [destination register], [pair]` This instruction will move the value pointed to by the register pair into the selected register.
 
-movfp [source register], [pair] This instruction will move the value in the selected register into the memory address pointed to by the register pair.
+`movfp [pair], [source register]` This instruction will move the value in the selected register into the memory address pointed to by the register pair.
 
 Register pairs are encoded as 0x00, and 0x01, for the first and second register pair.
 
@@ -54,42 +54,42 @@ Register pairs are encoded as 0x00, and 0x01, for the first and second register 
 
 | **Opcode** | **Instruction**                    | **What it does**                                                                                                                                   |
 |------------|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| 0x00       | movi [register], [immediate]   | Moves an immediate value into a selected register                                                                                                  |
-| 0x01       | movr [destination], [source]   | Moves values in between registers                                                                                                                  |
-| 0x02       | mova [address]                   | Moves a value from memory into the A register                                                                                                      |
-| 0x03       | movb [address]                   | Moves a value from memory into the B register                                                                                                      |
-| 0x04       | movc [address]                   | Moves a value from memory into the C register                                                                                                      |
-| 0x05       | movd [address]                   | Moves a value from memory into the D register                                                                                                      |
-| 0x06       | movfa [address]                  | Moves the value from the A register into memory                                                                                                    |
-| 0x07       | movfb [address]                  | Moves the value from the B register into memory                                                                                                    |
-| 0x08       | movfc [address]                  | Moves the value from the C register into memory                                                                                                    |
-| 0x09       | movfd [address]                  | Moves the value from the D register into memory                                                                                                    |
-| 0x0A       | movp [destination], [pair]     | Moves a value from memory (pointed to by the selected register pair) into the selected register                                                    |
-| 0x0B       | movfp [pair], [source]         | Moves the value from the selected register into the memory address pointed to by the register pair                                                 |
-| 0x10       | add [destination], [source]    | Adds the source register to the destination register                                                                                               |
-| 0x12       | sub [destination], [source]    | Subtracts the source register from the destination register                                                                                        |
-| 0x14       | inc (ASSEMBLER MACRO) [register] | A macro for add [register], 1                                                                                                                    |
-| 0x15       | dec (ASSEMBLER MACRO) [register] | A macro for sub [register], 1                                                                                                                    |
-| 0x16       | cmp [destination], [source]    | Subtracts the source register from the destination register, only updating the zero flag and not committing the result to the destination register |
-| 0x17       | addi [register], [immediate]   | Adds an immediate value to the selected register                                                                                                   |
-| 0x18       | subi [register], [immediate]   | Subtracts an immediate value from the selected register                                                                                            |
-| 0x19       | mul [destination], [source]    | Multiplies the destination register by the source register                                                                                         |
-| 0x20       | and [destination], [source]    | Performs a bitwise AND operation on two registers                                                                                                  |
-| 0x21       | or [destination], [source]     | Performs a bitwise OR operation on two registers                                                                                                   |
-| 0x22       | xor [destination], [source]    | Performs a bitwise XOR operation on two registers                                                                                                  |
-| 0x23       | not [register]                   | Performs a bitwise NOT operation on a register                                                                                                     |
-| 0x24       | shl [register]                   | Shifts the bits in a register left                                                                                                                 |
-| 0x25       | shr [register]                   | Shifts the bits in a register right                                                                                                                |
-| 0x30       | jmp [address]                    | Jumps to a specific memory address                                                                                                                 |
-| 0x31       | jz [address]                     | Jumps to a specific memory address if the zero flag is 1                                                                                           |
-| 0x32       | jnz [address]                    | Jumps to a specific memory address if the zero flag is 0                                                                                           |
-| 0x35       | jmpp [pair]                      | Jumps to the memory address pointed to by the selected register pair                                                                               |
-| 0x36       | jzp [pair]                       | Jumps to the memory address pointed to by the selected register pair if the zero flag is 1                                                         |
-| 0x37       | jnzp [pair]                      | Jumps to the memory address pointed to by the selected register pair if the zero flag is 0                                                         |
-| 0x40       | push [register]                  | Pushes the contents of the selected register to the stack                                                                                          |
-| 0x41       | pop [register]                   | Pops from the stack into the selected register                                                                                                     |
-| 0x52       | nop                                | Does nothing!                                                                                                                                      |
-| 0x53       | hlt                                | Permanently halts execution                                                                                                                        |
+| `0x00` | `movi [register], [immediate]` | Moves an immediate value into a selected register                                                                                                  |
+| `0x01` | `movr [destination], [source]` | Moves values in between registers                                                                                                                  |
+| `0x02` | `mova [address]` | Moves a value from memory into the A register                                                                                                      |
+| `0x03` | `movb [address]` | Moves a value from memory into the B register                                                                                                      |
+| `0x04` | `movc [address]` | Moves a value from memory into the C register                                                                                                      |
+| `0x05` | `movd [address]` | Moves a value from memory into the D register                                                                                                      |
+| `0x06` | `movfa [address]` | Moves the value from the A register into memory                                                                                                    |
+| `0x07` | `movfb [address]` | Moves the value from the B register into memory                                                                                                    |
+| `0x08` | `movfc [address]` | Moves the value from the C register into memory                                                                                                    |
+| `0x09` | `movfd [address]` | Moves the value from the D register into memory                                                                                                    |
+| `0x0A` | `movp [destination], [pair]` | Moves a value from memory (pointed to by the selected register pair) into the selected register                                                    |
+| `0x0B` | `movfp [pair], [source]` | Moves the value from the selected register into the memory address pointed to by the register pair                                                 |
+| `0x10` | `add [destination], [source]` | Adds the source register to the destination register                                                                                               |
+| `0x12` | `sub [destination], [source]` | Subtracts the source register from the destination register                                                                                        |
+| `0x14` | `inc (ASSEMBLER MACRO) [register]` | A macro for add [register], 1                                                                                                                    |
+| `0x15` | `dec (ASSEMBLER MACRO) [register]` | A macro for sub [register], 1                                                                                                                    |
+| `0x16` | `cmp [destination], [source]` | Subtracts the source register from the destination register, only updating the zero flag and not committing the result to the destination register |
+| `0x17` | `addi [register], [immediate]` | Adds an immediate value to the selected register                                                                                                   |
+| `0x18` | `subi [register], [immediate]` | Subtracts an immediate value from the selected register                                                                                            |
+| `0x19` | `mul [destination], [source]` | Multiplies the destination register by the source register                                                                                         |
+| `0x20` | `and [destination], [source]` | Performs a bitwise AND operation on two registers                                                                                                  |
+| `0x21` | `or [destination], [source]` | Performs a bitwise OR operation on two registers                                                                                                   |
+| `0x22` | `xor [destination], [source]` | Performs a bitwise XOR operation on two registers                                                                                                  |
+| `0x23` | `not [register]` | Performs a bitwise NOT operation on a register                                                                                                     |
+| `0x24` | `shl [register]` | Shifts the bits in a register left                                                                                                                 |
+| `0x25` | `shr [register]` | Shifts the bits in a register right                                                                                                                |
+| `0x30` | `jmp [address]` | Jumps to a specific memory address                                                                                                                 |
+| `0x31` | `jz [address]` | Jumps to a specific memory address if the zero flag is 1                                                                                           |
+| `0x32` | `jnz [address]` | Jumps to a specific memory address if the zero flag is 0                                                                                           |
+| `0x35` | `jmpp [pair]` | Jumps to the memory address pointed to by the selected register pair                                                                               |
+| `0x36` | `jzp [pair]` | Jumps to the memory address pointed to by the selected register pair if the zero flag is 1                                                         |
+| `0x37` | `jnzp [pair]` | Jumps to the memory address pointed to by the selected register pair if the zero flag is 0                                                         |
+| `0x40` | `push [register]` | Pushes the contents of the selected register to the stack                                                                                          |
+| `0x41` | `pop [register]` | Pops from the stack into the selected register                                                                                                     |
+| `0x52` | `nop` | Does nothing!                                                                                                                                      |
+| `0x53` | `hlt` | Permanently halts execution                                                                                                                        |
 
 ## Implementation
 
@@ -113,21 +113,21 @@ in no particular order.
 
 Prometheus Lite currently has **8** states, mostly dominated by fetching instructions due to the aforementioned memory interface. The states are:
 
-- FETCH_A: Starts fetching the first byte of the instruction
+- `FETCH_A`: Starts fetching the first byte of the instruction
 
-- FETCH_B: Finishes fetching the first byte, starts fetching the second byte
+- `FETCH_B`: Finishes fetching the first byte, starts fetching the second byte
 
-- FETCH_C: Finishes fetching the second byte, starts fetching the third byte
+- `FETCH_C`: Finishes fetching the second byte, starts fetching the third byte
 
-- FETCH_C_WAIT: Finishes fetching the third byte and decodes the instruction
+- `FETCH_C_WAIT`: Finishes fetching the third byte and decodes the instruction
 
-- EXECUTE: Enables the control unit and executes the instruction
+- `EXECUTE`: Enables the control unit and executes the instruction
 
-- WRITEBACK: Although memory operations can occur during EXECUTE, this state allows instructions that require an additional step to complete execution. For example, movfp reads the register pair during EXECUTE, then writes the value to memory during WRITEBACK
+- `WRITEBACK`: Although memory operations can occur during `EXECUTE`, this state allows instructions that require an additional step to complete execution. For example, `movfp` reads the register pair during `EXECUTE`, then writes the value to memory during `WRITEBACK`
 
-- REGISTER_WRITEBACK: This is a parallel to WRITEBACK, but for registers. For example, mova needs to access memory during EXECUTE, and writes the result to the A register during REGISTER_WRITEBACK. This state also increments the program counter
+- `REGISTER_WRITEBACK`: This is a parallel to `WRITEBACK`, but for registers. For example, `mova` needs to access memory during `EXECUTE`, and writes the result to the A register during `REGISTER_WRITEBACK`. This state also increments the program counter
 
-- HALT: This state is only set when the hlt instruction is executed, and the CPU stays in this state forever once it reaches it.
+- `HALT`: This state is only set when the `hlt` instruction is executed, and the CPU stays in this state forever once it reaches it.
 
 These states currently assume 8 bit, synchronous memory. The amount of states will likely be highly optimized once the actual ASIC sram interface is finished and released.
 
@@ -135,25 +135,25 @@ These states currently assume 8 bit, synchronous memory. The amount of states wi
 
 #### Instruction Decoding
 
-During the FETCH_C_WAIT state once all fetching is done, the 24 bit instruction register is decoded into an opcode and two operands. This is quite flimsy and may not work for some memory designs, so the instruction register, fetching, and decoding in general will likely be optimized and fixed up once a firm memory model is established.
+During the `FETCH_C_WAIT` state once all fetching is done, the 24 bit instruction register is decoded into an opcode and two operands. This is quite flimsy and may not work for some memory designs, so the instruction register, fetching, and decoding in general will likely be optimized and fixed up once a firm memory model is established.
 
 #### Arithmetic and General Execution
 
-Prometheus Lite has no dedicated ALU, arithmetic and bitwise operations are implemented directly in the control unit. After most instructions, the CPU state is explicitly advanced to the next required state for normal execution. For example, movi immediately skips to the REGISTER_WRITEBACK state as that’s where the program counter is incremented, and there is no extra memory writeback required. For movfp, however, the next state is not explicitly set, and instead the cpu naturally falls into the writeback state, which is required because the instruction requires multiple memory accesses.
+Prometheus Lite has no dedicated ALU, arithmetic and bitwise operations are implemented directly in the control unit. After most instructions, the CPU state is explicitly advanced to the next required state for normal execution. For example, `movi` immediately skips to the `REGISTER_WRITEBACK` state as that’s where the program counter is incremented, and there is no extra memory writeback required. For `movfp`, however, the next state is not explicitly set, and instead the cpu naturally falls into the writeback state, which is required because the instruction requires multiple memory accesses.
 
 #### Flags and Branching
 
 Prometheus Lite currently has one flag that can be used for conditional branching, the zero flag. The following instructions can be used for branching/jumping:
 
-- jmp: For jumping to an immediate address
+- `jmp`: For jumping to an immediate address
 
-- jz/jnz: For jumping to an immediate address based on the zero flag
+- `jz/jnz`: For jumping to an immediate address based on the zero flag
 
-- jmpp: For jumping to an address pointed to by a register pair
+- `jmpp`: For jumping to an address pointed to by a register pair
 
-- jzp/jnzp: For jumping to an address pointed to by a register pair based on the zero flag
+- `jzp/jnzp`: For jumping to an address pointed to by a register pair based on the zero flag
 
-Jumps are passed into the program counter, and happen on EXECUTE.
+Jumps are passed into the program counter, and happen on `EXECUTE`.
 
 ## Assembler
 
@@ -182,6 +182,7 @@ Binary:
 00000000 00000001 01111000
 00010010 00000000 00000001
 ```
+
 ## Tests
 
 Prometheus Lite’s functionality is tested through one testbench that initializes the CPU’s memory with lots of instructions, then lets the CPU naturally execute and see if the registers, program counter, instruction register, stack pointer, and memory values align with the expected values. If they do, tests pass, if not, tests fail.
@@ -210,7 +211,7 @@ In summary, I learned a lot from the development of Prometheus Lite, including e
 
 - This design is absolutely not final, but I’ve done pretty much everything I can in digital simulations for now. At this point, I’m going to submit the project, and refine it/add more features/optimize it as soon as I get the FPGA.
 
-- I want to add a way to interface with external devices, so, inspired by x86, I will likely implement in/out instructions once I get the FPGA and everything related to the actual ASIC is finalized.
+- I want to add a way to interface with external devices, so, inspired by x86, I will likely implement `in/out` instructions once I get the FPGA and everything related to the actual ASIC is finalized.
 
 - On the final ASIC design, I intend to add some silicon art. I've done research, and Tiny Tapeout seems to support it!
 
