@@ -33,6 +33,8 @@
 | `0x31` | `jz [address]` | [x] |
 | `0x32` | `jnz [address]` | [x] |
 | `0x35` | `jmpp` | [x] |
+| `0x36` | `jzp` | [x] |
+| `0x37` | `jnzp` | [x] |
 | `0x40` | `push [register]` | [x] |
 | `0x41` | `pop [register]` | [x] |
 | `0x52` | `nop` | [x] |

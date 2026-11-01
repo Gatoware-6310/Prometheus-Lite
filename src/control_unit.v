@@ -72,6 +72,8 @@ module control_unit (
     localparam SHR = 8'h25;
     localparam JNZ = 8'h32;
     localparam JMPP = 8'h35;
+    localparam JZP = 8'h36;
+    localparam JNZP = 8'h37;
     localparam PUSH = 8'h40;
     localparam POP = 8'h41;
     localparam NOP = 8'h52;
@@ -392,6 +394,37 @@ module control_unit (
             HLT: begin
                 next_state = 7; // stay here forever!
             end
+            JZP: begin
+                if(zero) begin
+                    if(operand_1 == 0) begin
+                        read_register_a = 8'h00;
+                        read_register_b = 8'h01;
+                    end else begin
+                        read_register_a = 8'h02;
+                        read_register_b = 8'h03;
+                    end
+                    
+                    jump_pc = 1;
+                    jump_value_pc = {data_a[2:0], data_b};
+                end
+                next_state = 6;
+            end
+            JNZP: begin
+                if(!zero) begin
+                    if(operand_1 == 0) begin
+                        read_register_a = 8'h00;
+                        read_register_b = 8'h01;
+                    end else begin
+                        read_register_a = 8'h02;
+                        read_register_b = 8'h03;
+                    end
+                    
+                    jump_pc = 1;
+                    jump_value_pc = {data_a[2:0], data_b};
+                end
+                next_state = 6;
+            end
+
             default: begin
                 // illegal instruction! maybe an exception register later?
             end

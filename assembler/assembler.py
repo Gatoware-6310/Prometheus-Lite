@@ -172,6 +172,14 @@ def assemble_instruction(instruction):
             data.append(0x53)
             data.append(0x00)
             data.append(0x00)
+        case 'jzp':
+            data.append(0x36)
+            data.append(get_pair(operands[0]))
+            data.append(0x00)
+        case 'jnzp':
+            data.append(0x37)
+            data.append(get_pair(operands[0]))
+            data.append(0x00)
         case _:
             raise_error("Illegal instruction encountered: " + opcode)
             return

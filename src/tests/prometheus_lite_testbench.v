@@ -257,9 +257,58 @@ initial begin
     ram.memory[198] = 8'h03;
     ram.memory[199] = 8'h00;
 
-    ram.memory[200] = 8'h53;
+    // move 230 into ab
+    ram.memory[200] = 8'h00;
     ram.memory[201] = 8'h00;
     ram.memory[202] = 8'h00;
+
+    ram.memory[203] = 8'h00;
+    ram.memory[204] = 8'h01;
+    ram.memory[205] = 8'hE6;
+
+    // compare c and c to set zero flag
+    ram.memory[206] = 8'h16;
+    ram.memory[207] = 8'h02;
+    ram.memory[208] = 8'h02;
+
+    // jnzp ab, should not jump
+    ram.memory[209] = 8'h37;
+    ram.memory[210] = 8'h00;
+    ram.memory[211] = 8'h00;
+
+    // jzp ab, to 230
+    ram.memory[212] = 8'h36;
+    ram.memory[213] = 8'h00;
+    ram.memory[214] = 8'h00;
+
+    // move 260 into ab
+    ram.memory[230] = 8'h00;
+    ram.memory[231] = 8'h00;
+    ram.memory[232] = 8'h01;
+
+    ram.memory[233] = 8'h00;
+    ram.memory[234] = 8'h01;
+    ram.memory[235] = 8'h04;
+
+    // compare c and d to clear zero flag
+    ram.memory[236] = 8'h16;
+    ram.memory[237] = 8'h02;
+    ram.memory[238] = 8'h03;
+
+    // jzp ab, should not jump
+    ram.memory[239] = 8'h36;
+    ram.memory[240] = 8'h00;
+    ram.memory[241] = 8'h00;
+
+    // jnzp ab, to 260
+    ram.memory[242] = 8'h37;
+    ram.memory[243] = 8'h00;
+    ram.memory[244] = 8'h00;
+
+    // halt
+    ram.memory[260] = 8'h53;
+    ram.memory[261] = 8'h00;
+    ram.memory[262] = 8'h00;
 
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
@@ -394,6 +443,34 @@ initial begin
     else
         $fatal(1, "PUSH/POP STACK TEST %d %d [PASS]", dut.rf.registers[2], dut.rf.registers[3]);
     
+    wait(dut.value_pc == 212);
+    @(negedge clk)
+    if(dut.value_pc == 212)
+        $display("JUMP IF NOT ZERO FROM POINTER %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP IF NOT ZERO FROM POINTER %d [FAIL]", dut.value_pc);
+
+    wait(dut.value_pc == 230);
+    @(negedge clk)
+    if(dut.value_pc == 230)
+        $display("JUMP IF ZERO FROM POINTER %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP IF ZERO FROM POINTER %d [FAIL]", dut.value_pc);
+
+    wait(dut.value_pc == 242);
+    @(negedge clk)
+    if(dut.value_pc == 242)
+        $display("JUMP IF ZERO FROM POINTER %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP IF ZERO FROM POINTER %d [FAIL]", dut.value_pc);
+
+    wait(dut.value_pc == 260);
+    @(negedge clk)
+    if(dut.value_pc == 260)
+        $display("JUMP IF NOT ZERO FROM POINTER %d [PASS]", dut.value_pc);
+    else
+        $fatal(1, "JUMP IF NOT ZERO FROM POINTER %d [FAIL]", dut.value_pc);
+
     wait(dut.state == 7); // wait till halted
     $display("HALT TEST [PASS]"); // there's no way we get here unless it's halted so i'm just gonna be lazy
 
