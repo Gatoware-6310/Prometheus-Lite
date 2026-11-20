@@ -1,0 +1,19 @@
+# Read the four RF entries as individual wires so A, B, C and D are tappable.
+read_verilog -sv -mem2reg src/register_file.v
+read_verilog -sv src/prometheus_lite.v src/control_unit.v src/instruction_register.v src/program_counter.v src/memory.v
+read_verilog fpga/icepi-zero/top.v fpga/icepi-zero/trace.v
+hierarchy -top top
+proc
+flatten
+cd top
+connect -nomap -nounset -set pc cpu.value_pc
+connect -nomap -nounset -set sp cpu.stack_pointer
+connect -nomap -nounset -set state cpu.state
+connect -nomap -nounset -set opcode cpu.opcode
+connect -nomap -nounset -set register_a cpu.rf.registers[0]
+connect -nomap -nounset -set register_b cpu.rf.registers[1]
+connect -nomap -nounset -set register_c cpu.rf.registers[2]
+connect -nomap -nounset -set register_d cpu.rf.registers[3]
+connect -nomap -nounset -set zero cpu.zero
+cd ..
+synth_ecp5 -top top -json build/icepi/cpu.json

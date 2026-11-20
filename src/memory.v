@@ -11,6 +11,12 @@ module memory(
 
 reg[7:0] memory[0:2047];
 
+
+/* TEMPORARY FOR EASE OF TESTING WITH FPGA */
+initial begin
+    $readmemh("fpga/icepi-zero/program.hex", memory);
+end
+
 always@(posedge clk) begin
     if(memory_read_enable) begin // reads will take priority. if read enable AND write enable are both `1`, it'll read
         read_data <= memory[address];
