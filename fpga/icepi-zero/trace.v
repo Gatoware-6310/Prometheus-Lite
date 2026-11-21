@@ -1,6 +1,6 @@
 module icepi_trace (
     input wire clk, cpu_reset,
-    input wire [95:0] probes,
+    input wire [98:0] probes,
     input wire jtck, jtdi, jce, jshift, jupdate, jrstn,
     output reg jtdo
 );
@@ -23,8 +23,8 @@ module icepi_trace (
     wire writing = capture_state == CAPTURE ||
                    (capture_state == WAIT_RELEASE && !cpu_reset);
 
-    (* ram_style = "block" *) reg [95:0] samples [0:255];
-    reg [95:0] sample;
+    (* ram_style = "block" *) reg [98:0] samples [0:255];
+    reg [98:0] sample;
     always @(posedge clk)
         if (writing)
             samples[write_address] <= probes;
@@ -76,7 +76,7 @@ module icepi_trace (
             shift_dr <= jshift && selected;
             update_dr <= jupdate && selected;
             if (capture_dr)
-                scan <= {8'ha8, read_address, done_sync[1], ack_sync[1], 6'b0, sample};
+                scan <= {8'ha9, read_address, done_sync[1], ack_sync[1], 3'b0, sample};
             else if (shift_dr)
                 scan <= {jtdi, scan[119:1]};
         end

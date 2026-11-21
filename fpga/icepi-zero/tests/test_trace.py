@@ -44,11 +44,11 @@ class TraceTest(unittest.TestCase):
                         self.assertEqual(tap.identify(), trace.IDCODE)
                         samples = trace.capture(tap, trigger, timeout=3)
                         self.assertEqual(len(samples), 256)
-                        start = samples[0] & 0x3fff
+                        start = samples[0] & 0x7fff
                         for index, sample in enumerate(samples):
-                            expected = (0x52e << 85 | 0xd7 << 77 | 0xbc << 69 | 0x92 << 61 | 0xc2 << 52 | 0x81 << 44 | 1 << 43 |
-                                        0x352 << 31 | 1 << 30 | 0x69 << 22 | 0x53 << 14 |
-                                        ((start + index) & 0x3fff))
+                            expected = (0xb2e << 87 | 0xd7 << 79 | 0xbc << 71 | 0x92 << 63 | 0xc2 << 54 | 0x81 << 46 | 1 << 45 |
+                                        0xb52 << 32 | 1 << 31 | 0x69 << 23 | 0x53 << 15 |
+                                        ((start + index) & 0x7fff))
                             self.assertEqual(sample, expected)
 
                     path = work / "trace.vcd"
@@ -60,8 +60,8 @@ class TraceTest(unittest.TestCase):
                     for register, symbol, value in (("b", ",", 0x92), ("c", "-", 0xbc), ("d", ".", 0xd7)):
                         self.assertIn(f"$var wire 8 {symbol} register_{register} $end", vcd)
                         self.assertIn(f"b{value:08b} {symbol}", vcd)
-                    self.assertIn("$var wire 11 / sp $end", vcd)
-                    self.assertIn("b10100101110 /", vcd)
+                    self.assertIn("$var wire 12 / sp $end", vcd)
+                    self.assertIn("b101100101110 /", vcd)
                     self.assertEqual(len([line for line in vcd.splitlines() if line.startswith("#")]), 257)
                     self.assertTrue(vcd.endswith("#5120\n"))
                 finally:

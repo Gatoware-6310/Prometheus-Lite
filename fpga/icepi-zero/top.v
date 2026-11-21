@@ -4,14 +4,14 @@ module top (
     output wire [4:0] led
 );
 
-    wire [10:0] memory_address;
+    wire [11:0] memory_address;
     wire memory_read_enable;
     wire memory_write_enable;
     wire [7:0] memory_write_data;
     wire [7:0] memory_read_data;
     wire reset = ~button[0];
     // trace.ys connects these inputs to existing nets in the flattened CPU.
-    wire [10:0] pc, sp;
+    wire [11:0] pc, sp;
     wire [2:0] state;
     wire [7:0] opcode, register_a, register_b, register_c, register_d;
     wire zero;

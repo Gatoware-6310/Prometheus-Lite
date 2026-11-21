@@ -42,7 +42,7 @@ def get_register(reg: str):
 
 def movabcd(opcode, operand):
     data.append(opcode)
-    data.append((int(operand, 0) >> 8) & 0x07) # Shift right 8 bits, AND with 0b111
+    data.append((int(operand, 0) >> 8) & 0x0F) # Shift right 8 bits, AND with 0b1111
     data.append(int(operand, 0) & 0xFF) # AND with 0b11111111
 
 def assemble_instruction(instruction):

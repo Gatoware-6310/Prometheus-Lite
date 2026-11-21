@@ -9,7 +9,7 @@ reg reset = 0;
 reg ir_enable = 0;
 reg[23:0] instruction;
 
-wire [10:0] memory_address;
+wire [11:0] memory_address;
 wire memory_read_enable;
 wire memory_write_enable;
 wire [7:0] memory_write_data;
@@ -65,10 +65,10 @@ initial begin
     ram.memory[7] = 8'h01;
     ram.memory[8] = 8'h00;
 
-    // Set the instruction to movi a, 63
+    // Set the instruction to movi a, 59
     ram.memory[9] = 8'h00;
     ram.memory[10] = 8'h00;
-    ram.memory[11] = 8'h3F;
+    ram.memory[11] = 8'h3B;
 
     // Set the instruction to movfa 0x200
     ram.memory[12] = 8'h06;
@@ -313,7 +313,7 @@ initial begin
     // put a number into the memory address, 0x100
     ram.memory[256] = 255;
 
-    ram.memory[2047] = 67; // last index
+    ram.memory[3071] = 67; // last index
 
     `WAIT
     reset = 0;
@@ -341,24 +341,24 @@ initial begin
 
     wait(dut.value_pc == 15);
     @(negedge clk)
-    if(ram.memory[512] == 63)
+    if(ram.memory[512] == 59)
         $display("MOVE BYTE FROM REGISTER INTO MEMORY %d, [PASS]", ram.memory[512]);
     else
         $fatal(1, "MOVE BYTE FROM REGISTER INTO MEMORY %d, [FAIL]", ram.memory[512]);
 
     wait(dut.value_pc == 24);
     @(negedge clk)
-    if(dut.rf.registers[0] == 63)
+    if(dut.rf.registers[0] == 59)
         $display("MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [PASS]", dut.rf.registers[0]);
     else 
         $fatal(1, "MOVE BYTE FROM MEMORY POINTED TO BY REGISTER PAIR INTO REGISTER %d [FAIL]", dut.rf.registers[0]);
 
     wait(dut.value_pc == 27);
     @(negedge clk)
-    if(ram.memory[1792] == 63)
-        $display("MOVE BYTE FROM REGISTER TO MEMORY POINTED TO BY REGISTER PAIR %d [PASS]", ram.memory[1792]);
+    if(ram.memory[2816] == 59)
+        $display("MOVE BYTE FROM REGISTER TO MEMORY POINTED TO BY REGISTER PAIR %d [PASS]", ram.memory[2816]);
     else 
-        $fatal(1, "MOVE BYTE FROM REGISTER TO MEMORY POINTED TO BY REGISTER PAIR %d [FAIL]", ram.memory[1008]);
+        $fatal(1, "MOVE BYTE FROM REGISTER TO MEMORY POINTED TO BY REGISTER PAIR %d [FAIL]", ram.memory[2816]);
 
     wait(dut.value_pc == 36);
     @(negedge clk)

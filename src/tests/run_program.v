@@ -10,7 +10,7 @@ reg reset = 0;
 
 always #5 clk = ~clk;
 
-wire [10:0] memory_address;
+wire [11:0] memory_address;
 wire memory_read_enable;
 wire memory_write_enable;
 wire [7:0] memory_write_data;

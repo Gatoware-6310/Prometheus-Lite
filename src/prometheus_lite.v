@@ -3,7 +3,7 @@ module prometheus_lite(
     input wire clk,
     input wire reset,
 
-    output wire [10:0] memory_address,
+    output wire [11:0] memory_address,
     output wire memory_read_enable,
     output wire memory_write_enable,
     output wire [7:0] memory_write_data,
@@ -31,22 +31,22 @@ module prometheus_lite(
     wire[7:0] data_c;
 
     /* Stack Pointer */
-    reg[10:0] stack_pointer;
+    reg[11:0] stack_pointer;
 
     /* Fetch signals */
-    reg [10:0] fetch_address;
+    reg [11:0] fetch_address;
     reg fetch_read_enable;
 
     /* Control unit signals */
-    wire [10:0] cu_memory_address;
+    wire [11:0] cu_memory_address;
     wire cu_memory_read_enable;
     wire cu_memory_write_enable;
     wire [7:0] cu_memory_write_data;
 
     /* Program Counter stuff */
     wire jump_pc;
-    wire[10:0] jump_value_pc;
-    wire[10:0] value_pc;
+    wire[11:0] jump_value_pc;
+    wire[11:0] value_pc;
 
     // State can be 9 things, so ceil(log2(9)) = 4
     // i swear discovered that formula myself btw anyone else reading this be proud of me (even though it's very obvious)

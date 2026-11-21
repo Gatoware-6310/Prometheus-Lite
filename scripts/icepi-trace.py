@@ -11,18 +11,18 @@ IDCODE = 0x41111043
 ER1 = 0x32
 DEPTH = 256
 SCAN_BITS = 120
-SIGNATURE = 0xA8
+SIGNATURE = 0xA9
 SIGNATURE_SHIFT = 112
 ADDRESS_SHIFT = 104
 VALID, ARM, RESET_TRIGGER = 1 << 10, 1 << 8, 1 << 9
 DONE, ACK = 1 << 103, 1 << 102
-SAMPLE_MASK = (1 << 96) - 1
+SAMPLE_MASK = (1 << 99) - 1
 FIELDS = (
-    ("pc", 11), ("state", 3), ("opcode", 8), ("register_a", 8),
-    ("zero", 1), ("memory_address", 11), ("memory_read_enable", 1),
+    ("pc", 12), ("state", 3), ("opcode", 8), ("register_a", 8),
+    ("zero", 1), ("memory_address", 12), ("memory_read_enable", 1),
     ("memory_write_enable", 1), ("memory_read_data", 8),
     ("memory_write_data", 8), ("reset", 1),
-    ("register_b", 8), ("register_c", 8), ("register_d", 8), ("sp", 11),
+    ("register_b", 8), ("register_c", 8), ("register_d", 8), ("sp", 12),
 )
 # FT231X modem pins as wired on Icepi Zero (openFPGALoader board definition).
 TMS, TCK, TDI, TDO = 0x40, 0x20, 0x80, 0x08

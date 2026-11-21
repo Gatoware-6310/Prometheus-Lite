@@ -15,8 +15,8 @@ module tap_bridge;
     reg [15:0] cycle=0;
     reg cpu_reset=0;
     reg [7:0] trigger_delay=0;
-    wire [95:0] probes = {11'h52e, 8'hd7, 8'hbc, 8'h92, cpu_reset, 8'hc2, 8'h81, 1'b1, 1'b0,
-                         11'h352, 1'b1, 8'h69, 8'h53, cycle[13:0]};
+    wire [98:0] probes = {12'hb2e, 8'hd7, 8'hbc, 8'h92, cpu_reset, 8'hc2, 8'h81, 1'b1, 1'b0,
+                         12'hb52, 1'b1, 8'h69, 8'h53, cycle[14:0]};
     icepi_trace dut(clk, cpu_reset, probes, tck, jtdi, jce, state == SHIFT_DR,
                     state == UPDATE_DR, state != RESET, jtdo);
 

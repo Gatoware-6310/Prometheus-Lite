@@ -10,7 +10,7 @@ Source code and the latest (passing!) workflows can be found at [https://github.
 
 ## Architecture
 
-Prometheus Lite features four 8-bit general purpose registers (a, b, c, and d), an 11-bit address bus for addressing up to 2kb of memory, along with an 11-bit program counter and a 24 bit instruction register. There is only one CPU flag, the zero flag.
+Prometheus Lite features four 8-bit general purpose registers (a, b, c, and d), a 12-bit address bus for addressing 3 KiB of installed RAM, along with a 12-bit program counter and a 24 bit instruction register. There is only one CPU flag, the zero flag.
 
 Each instruction is 3 bytes (24 bits) - one byte for the opcode, another for the first operand, and one last byte for the second operand. An example is:
 
@@ -28,19 +28,19 @@ This will move the immediate value 63 into the `b` register. In hexadecimal, eac
 
 ### Memory
 
-Currently, the memory interface supports up to 2 kilobytes of synchronous, single port memory. The interface I’m using is intentionally a bit ambiguous until the actual wrappers are released, the entire CPU will be adapted once they are.
+Currently, the memory interface supports 3 KiB of synchronous, single-port memory at `0x000`–`0xBFF`. Reads at `0xC00`–`0xFFF` return zero and writes there are ignored. The interface I’m using is intentionally a bit ambiguous until the actual wrappers are released, the entire CPU will be adapted once they are.
 
 Memory can be interfaced either directly or via the stack.
 
 #### The Stack
 
-Prometheus Lite features an empty descending stack, with an 11-bit stack pointer initialized at 0x7FF (the last memory index) that grows downward until it hits 0. There is no memory explicitly reserved for the stack.
+Prometheus Lite features an empty descending stack, with a 12-bit stack pointer initialized at 0xBFF (the last memory index) that grows downward until it hits 0. There is no memory explicitly reserved for the stack.
 
 Push writes the value of the selected register to the memory address pointed to by the stack pointer, then decrements the stack pointer by 1. Similarly, pop increments the stack pointer by 1, then reads the value at the memory address into the selected register.
 
 ### Register Pairs
 
-Prometheus Lite features two native register pairs, ab, and cd. Register pairs are primarily used for 11-bit pointers, essentially concatenating two 8-bit values with big endian ordering.
+Prometheus Lite features two native register pairs, ab, and cd. Register pairs are primarily used for 12-bit pointers, using the low four bits of the first register as the high address bits and the second register as the low byte.
 
 The instructions that use register pairs are:
 
@@ -103,7 +103,7 @@ Prometheus Lite only has 5 modules:
 
 - The control unit: Executes ALL instructions, including arithmetic operations instead of having a separate ALU
 
-- The program counter: A separate 11-bit register that contains a pointer to the current instruction. This advances by 3 due to 3-byte instructions and byte addressing
+- The program counter: A separate 12-bit register that contains a pointer to the current instruction. This advances by 3 due to 3-byte instructions and byte addressing
 
 - The instruction register: A separate 24-bit register that contains the opcode and two operands of the current instruction
 

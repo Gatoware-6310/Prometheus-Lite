@@ -8,7 +8,7 @@ module control_unit (
 
     /* CURRENT INSTRUCTION STUFF, like for jumps */
     output reg jump_pc = 0,
-    output reg[10:0] jump_value_pc = 0,
+    output reg[11:0] jump_value_pc = 0,
 
     input wire[7:0] opcode,
     input wire[7:0] operand_1,
@@ -28,12 +28,12 @@ module control_unit (
     output reg[7:0] write_data,
 
     /* STACK STUFF */
-    output reg[10:0] stack_pointer,
+    output reg[11:0] stack_pointer,
     
     /* MEMORY STUFF */
     output reg memory_read_enable,
     output reg memory_write_enable,
-    output reg[10:0] memory_address,
+    output reg[11:0] memory_address,
     output reg[7:0] memory_write_data,
     input wire[7:0] memory_read_data
 );
@@ -41,7 +41,7 @@ module control_unit (
     reg zero_next;
     reg write_zero;
 
-    reg[10:0] sp_next;
+    reg[11:0] sp_next;
     reg write_sp;
 
     localparam MOVI = 8'h00;
@@ -120,15 +120,15 @@ module control_unit (
             end
             MOVA: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, mova [address]
                 memory_read_enable = 1;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 write_register = 0; // set it to a
                 rf_write_enable = 1;
-                write_data = memory_read_data; // concatenate the last 3 bits of operand 2 onto operand 1
+                write_data = memory_read_data;
                 next_state = 6;
             end
             MOVB: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movb [address]
                 memory_read_enable = 1;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 write_register = 1; // b
                 rf_write_enable = 1;
                 write_data = memory_read_data;
@@ -136,7 +136,7 @@ module control_unit (
             end
             MOVC: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movc [address]
                 memory_read_enable = 1;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 write_register = 2; // c
                 rf_write_enable = 1;
                 write_data = memory_read_data;
@@ -144,7 +144,7 @@ module control_unit (
             end
             MOVD: begin // MOVE BYTE FROM MEMORY INTO A REGISTER, movd [address]
                 memory_read_enable = 1;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 write_register = 3; // d
                 rf_write_enable = 1;
                 write_data = memory_read_data;
@@ -153,26 +153,26 @@ module control_unit (
             MOVFA: begin
                 memory_write_enable = 1;
                 read_register_a = 0;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 memory_write_data = data_a;
                 // next state is already 5, writeback. this is what we need because we're writing to memory and we set it up here!
             end
             MOVFB: begin
                 memory_write_enable = 1;
                 read_register_a = 1;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 memory_write_data = data_a;
             end
             MOVFC: begin
                 memory_write_enable = 1;
                 read_register_a = 2;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 memory_write_data = data_a;
             end
             MOVFD: begin
                 memory_write_enable = 1;
                 read_register_a = 3;
-                memory_address = {operand_1[2:0], operand_2};
+                memory_address = {operand_1[3:0], operand_2};
                 memory_write_data = data_a;
             end
             MOVP: begin
@@ -184,7 +184,7 @@ module control_unit (
                     read_register_b = 8'h03;
                 end
                     memory_read_enable = 1;
-                    memory_address = {data_a[2:0], data_b}; // concatenate the last 3 bits of register 2 onto register 1
+                    memory_address = {data_a[3:0], data_b}; // concatenate the last 4 bits of register 2 onto register 1
                     write_register = operand_1[1:0]; // get destination register
                     rf_write_enable = 1;
                     write_data = memory_read_data;
@@ -198,7 +198,7 @@ module control_unit (
                     read_register_a = 8'h02;
                     read_register_b = 8'h03;
                 end
-                memory_address = {data_a[2:0], data_b}; // concatenate the last 3 bits of register 2 onto register 1
+                memory_address = {data_a[3:0], data_b}; // concatenate the last 4 bits of register 2 onto register 1
                 read_register_c = operand_2[1:0];
                 memory_write_data = data_c;
                 memory_write_enable = 1;
@@ -251,20 +251,20 @@ module control_unit (
             end
             JMP: begin
                 jump_pc = 1;
-                jump_value_pc = {operand_1[2:0], operand_2};
+                jump_value_pc = {operand_1[3:0], operand_2};
                 next_state = 6;
             end
             JZ: begin
                 if(zero) begin
                     jump_pc = 1;
-                    jump_value_pc = {operand_1[2:0], operand_2};
+                    jump_value_pc = {operand_1[3:0], operand_2};
                 end
                 next_state = 6;
             end
             JNZ: begin
                 if(!zero) begin // this should be it?
                     jump_pc = 1;
-                    jump_value_pc = {operand_1[2:0], operand_2};
+                    jump_value_pc = {operand_1[3:0], operand_2};
                 end
                 next_state = 6;
             end
@@ -368,7 +368,7 @@ module control_unit (
                 end
                 
                 jump_pc = 1;
-                jump_value_pc = {data_a[2:0], data_b};
+                jump_value_pc = {data_a[3:0], data_b};
                 next_state = 6;
             end
             PUSH: begin
@@ -405,7 +405,7 @@ module control_unit (
                     end
                     
                     jump_pc = 1;
-                    jump_value_pc = {data_a[2:0], data_b};
+                    jump_value_pc = {data_a[3:0], data_b};
                 end
                 next_state = 6;
             end
@@ -420,7 +420,7 @@ module control_unit (
                     end
                     
                     jump_pc = 1;
-                    jump_value_pc = {data_a[2:0], data_b};
+                    jump_value_pc = {data_a[3:0], data_b};
                 end
                 next_state = 6;
             end
@@ -434,7 +434,7 @@ module control_unit (
     // for flags/sp to write at the same time
     always @(posedge clk) begin
         if (reset) // not clean, but we're doing this because we can't reset in the top level and i don't wanna do a bunch of janky sp_next stuff
-            stack_pointer <= 11'h7FF;
+            stack_pointer <= 12'hBFF;
         else if (enable) begin
             if (write_zero)
                 zero <= zero_next;

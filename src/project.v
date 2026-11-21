@@ -16,14 +16,14 @@ module tt_um_gatoware_prometheus_lite (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-    wire [10:0] memory_address;
+    wire [11:0] memory_address;
     wire memory_read_enable;
     wire memory_write_enable;
     wire [7:0] memory_write_data;
     wire [7:0] memory_read_data;
 
     wire load_program = uio_in[0];
-    reg [10:0] load_address;
+    reg [11:0] load_address;
 
     always @(posedge clk) begin
         if (!rst_n || !load_program)

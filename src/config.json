@@ -79,24 +79,31 @@
       "instances": {
         "ram.bank0": {
           "location": [
-            55,
-            10
+            50,
+            75
           ],
           "orientation": "N"
         },
         "ram.bank1": {
           "location": [
-            660,
-            10
+            385,
+            75
+          ],
+          "orientation": "N"
+        },
+        "ram.bank2": {
+          "location": [
+            720,
+            75
           ],
           "orientation": "N"
         }
       },
       "gds": [
-        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.rotated.gds"
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.gds"
       ],
       "lef": [
-        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.rotated.lef"
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.lef"
       ],
       "vh": [
         "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__blackbox_pp.v"
@@ -119,7 +126,8 @@
   },
   "PDN_MACRO_CONNECTIONS": [
     "ram.bank0 VPWR VGND VDD VSS",
-    "ram.bank1 VPWR VGND VDD VSS"
+    "ram.bank1 VPWR VGND VDD VSS",
+    "ram.bank2 VPWR VGND VDD VSS"
   ],
   "PDN_CFG": "dir::sram-pdn.tcl"
 }
