@@ -48,10 +48,10 @@ module prometheus_lite(
     wire[10:0] jump_value_pc;
     wire[10:0] value_pc;
 
-    // State can be 6 things, so ceil(log2(6)) = 3
+    // State can be 9 things, so ceil(log2(9)) = 4
     // i swear discovered that formula myself btw anyone else reading this be proud of me (even though it's very obvious)
-    reg[2:0] state;
-    reg[2:0] next_state;
+    reg[3:0] state;
+    reg[3:0] next_state;
 
     localparam FETCH_A = 0;
     localparam FETCH_B = 1;
@@ -61,6 +61,7 @@ module prometheus_lite(
     localparam WRITEBACK = 5;
     localparam REGISTER_WRITEBACK = 6;
     localparam HALT = 7;
+    localparam LOAD_PROGRAM = 8;
 
     wire fetching = (state <= FETCH_C_WAIT);
 
@@ -178,6 +179,8 @@ module prometheus_lite(
                     state <= FETCH_A;
                 HALT: // this should never reach execution
                     state <= HALT; // just loop infinitely, very simple. 
+                // LOAD_PROGRAM:
+                    // TODO: implement
                 default:
                     // illegal state?? how did you even get here
                     state <= FETCH_A;

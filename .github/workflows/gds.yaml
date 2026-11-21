@@ -13,6 +13,14 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Checkout SRAM macro
+        uses: actions/checkout@v6
+        with:
+          repository: RTimothyEdwards/gf180mcu_ocd_ip_sram
+          ref: d41c7447d34d0c298158094378c8268560941724
+          path: build/asic-memory/ocd
+          persist-credentials: false
+
       - name: Build GDS
         uses: TinyTapeout/tt-gds-action@ttgf26c
         with:
@@ -33,6 +41,14 @@ jobs:
         uses: actions/checkout@v6
         with:
           submodules: recursive
+
+      - name: Checkout SRAM macro
+        uses: actions/checkout@v6
+        with:
+          repository: RTimothyEdwards/gf180mcu_ocd_ip_sram
+          ref: d41c7447d34d0c298158094378c8268560941724
+          path: build/asic-memory/ocd
+          persist-credentials: false
 
       - name: GL test
         uses: TinyTapeout/tt-gds-action/gl_test@ttgf26c

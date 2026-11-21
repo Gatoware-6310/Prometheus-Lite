@@ -1,4 +1,4 @@
-/* Memory frontend/interface, we don't actually need to put 2kb of memory worth of transistors on the chip */
+/* Portable RAM for simulation and FPGA builds */
 
 module memory(
     input wire clk,
@@ -9,13 +9,14 @@ module memory(
     output reg[7:0] read_data
 );
 
-reg[7:0] memory[0:2047];
+(* ram_style = "distributed" *) reg[7:0] memory[0:2047];
 
 
-/* TEMPORARY FOR EASE OF TESTING WITH FPGA */
+`ifdef ICEPI_ZERO
 initial begin
     $readmemh("fpga/icepi-zero/program.hex", memory);
 end
+`endif
 
 always@(posedge clk) begin
     if(memory_read_enable) begin // reads will take priority. if read enable AND write enable are both `1`, it'll read

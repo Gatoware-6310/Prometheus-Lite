@@ -8,7 +8,7 @@ project:
   clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
+  tiles: "3x4"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_gatoware_prometheus_lite"
@@ -22,20 +22,21 @@ project:
     - "control_unit.v"
     - "instruction_register.v"
     - "memory.v"
+    - "memory_asic.v"
     - "program_counter.v"
     - "register_file.v"
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "Memory read data bit 0"
-  ui[1]: "Memory read data bit 1"
-  ui[2]: "Memory read data bit 2"
-  ui[3]: "Memory read data bit 3"
-  ui[4]: "Memory read data bit 4"
-  ui[5]: "Memory read data bit 5"
-  ui[6]: "Memory read data bit 6"
-  ui[7]: "Memory read data bit 7"
+  ui[0]: "Program load byte bit 0"
+  ui[1]: "Program load byte bit 1"
+  ui[2]: "Program load byte bit 2"
+  ui[3]: "Program load byte bit 3"
+  ui[4]: "Program load byte bit 4"
+  ui[5]: "Program load byte bit 5"
+  ui[6]: "Program load byte bit 6"
+  ui[7]: "Program load byte bit 7"
 
   # Outputs
   uo[0]: "Memory address bit 0"
@@ -48,8 +49,8 @@ pinout:
   uo[7]: "Memory address bit 7"
 
   # Bidirectional pins
-  uio[0]: "Memory write data bit 0"
-  uio[1]: "Memory write data bit 1"
+  uio[0]: "Program load mode (holds CPU in reset)"
+  uio[1]: "Write next program byte on rising edge"
   uio[2]: "Memory write data bit 2"
   uio[3]: "Memory write data bit 3"
   uio[4]: "Memory write data bit 4"

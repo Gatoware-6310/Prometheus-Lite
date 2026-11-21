@@ -1,6 +1,6 @@
 # Read the four RF entries as individual wires so A, B, C and D are tappable.
 read_verilog -sv -mem2reg src/register_file.v
-read_verilog -sv src/prometheus_lite.v src/control_unit.v src/instruction_register.v src/program_counter.v src/memory.v
+read_verilog -sv -DICEPI_ZERO src/prometheus_lite.v src/control_unit.v src/instruction_register.v src/program_counter.v src/memory.v
 read_verilog fpga/icepi-zero/top.v fpga/icepi-zero/trace.v
 hierarchy -top top
 proc

@@ -35,6 +35,8 @@ VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilo
 
 # this gets copied in by the GDS action workflow
 VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
+SRAM_CELL = gf180mcu_ocd_ip_sram__sram1024x8m8wm1
+VERILOG_SOURCES += $(PWD)/../build/asic-memory/ocd/cells/$(SRAM_CELL)/$(SRAM_CELL).v
 
 endif
 

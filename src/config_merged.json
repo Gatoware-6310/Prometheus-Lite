@@ -1,6 +1,6 @@
 {
   "PL_TARGET_DENSITY_PCT": 60,
-  "CLOCK_PERIOD": 20,
+  "CLOCK_PERIOD": 70,
   "PL_RESIZER_HOLD_SLACK_MARGIN": 0.1,
   "GRT_RESIZER_HOLD_SLACK_MARGIN": 0.05,
   "RUN_LINTER": 1,
@@ -29,11 +29,12 @@
     "dir::control_unit.v",
     "dir::instruction_register.v",
     "dir::memory.v",
+    "dir::memory_asic.v",
     "dir::program_counter.v",
     "dir::register_file.v"
   ],
-  "DIE_AREA": "0 0 346.64 160.72",
-  "FP_DEF_TEMPLATE": "dir::../tt/tech/gf180mcuD/def/tt_block_1x1_pgvdd.def",
+  "DIE_AREA": "0 0 1075.76 736.96",
+  "FP_DEF_TEMPLATE": "dir::../tt/tech/gf180mcuD/def/tt_block_3x4_pgvdd.def",
   "VDD_PIN": "VPWR",
   "GND_PIN": "VGND",
   "RT_MAX_LAYER": "Metal4",
@@ -63,5 +64,56 @@
     "*_ff_n40C_3v60": [
       "pdk_dir::libs.ref/gf180mcu_fd_sc_mcu7t5v0/lib/gf180mcu_fd_sc_mcu7t5v0__ff_n40C_3v60.lib"
     ]
-  }
+  },
+  "VERILOG_DEFINES": [
+    "PROMETHEUS_ASIC_SRAM"
+  ],
+  "MACROS": {
+    "gf180mcu_ocd_ip_sram__sram1024x8m8wm1": {
+      "instances": {
+        "ram.bank0": {
+          "location": [
+            65,
+            75
+          ],
+          "orientation": "N"
+        },
+        "ram.bank1": {
+          "location": [
+            410,
+            75
+          ],
+          "orientation": "N"
+        }
+      },
+      "gds": [
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.gds"
+      ],
+      "lef": [
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.lef"
+      ],
+      "vh": [
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__blackbox_pp.v"
+      ],
+      "spice": [
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.spice"
+      ],
+      "lib": {
+        "*_tt_025C_3v30": [
+          "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__tt_025C_3v30.lib"
+        ],
+        "*_ss_125C_3v00": [
+          "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__ss_125C_3v00.lib"
+        ],
+        "*_ff_n40C_3v60": [
+          "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__ff_n40C_3v60.lib"
+        ]
+      }
+    }
+  },
+  "PDN_MACRO_CONNECTIONS": [
+    "ram.bank0 VPWR VGND VDD VSS",
+    "ram.bank1 VPWR VGND VDD VSS"
+  ],
+  "PDN_CFG": "dir::sram-pdn.tcl"
 }
