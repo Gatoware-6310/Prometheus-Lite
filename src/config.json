@@ -17,7 +17,7 @@
 
   "//": "CLOCK_PERIOD - Increase this in case you are getting setup time violations.",
   "//": "The value is in nanoseconds, so 20ns == 50MHz.",
-  "CLOCK_PERIOD": 70,
+  "CLOCK_PERIOD": 75,
 
   "//": "Hold slack margin - Increase them in case you are getting hold violations.",
   "PL_RESIZER_HOLD_SLACK_MARGIN": 0.1,
@@ -79,24 +79,24 @@
       "instances": {
         "ram.bank0": {
           "location": [
-            65,
-            75
+            55,
+            10
           ],
           "orientation": "N"
         },
         "ram.bank1": {
           "location": [
-            410,
-            75
+            660,
+            10
           ],
           "orientation": "N"
         }
       },
       "gds": [
-        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.gds"
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.rotated.gds"
       ],
       "lef": [
-        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.lef"
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.rotated.lef"
       ],
       "vh": [
         "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__blackbox_pp.v"

@@ -46,26 +46,4 @@ module tb ();
       .rst_n  (rst_n)     // not reset
   );
 
-  // Add an instruction through this
-  `ifndef GL_TEST
-  initial begin
-      // movi a, 63
-      user_project.ram.memory[0] = 8'h00;
-      user_project.ram.memory[1] = 8'h00;
-      user_project.ram.memory[2] = 8'h3F;
-
-      // jmp 0
-      user_project.ram.memory[3] = 8'h30;
-      user_project.ram.memory[4] = 8'h00;
-      user_project.ram.memory[5] = 8'h00;
-  end
-  `endif
-
-`ifndef GL_TEST
-  always @(negedge clk) begin
-      if (rst_n)
-          $display("PC: %d, State: %d, Opcode: %h, Address: %d", user_project.cpu.value_pc, user_project.cpu.state, user_project.cpu.opcode, user_project.memory_address);
-  end
-`endif
-
 endmodule

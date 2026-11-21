@@ -10,8 +10,8 @@
     "dir::program_counter.v",
     "dir::register_file.v"
   ],
-  "DIE_AREA": "0 0 1075.76 736.96",
-  "FP_DEF_TEMPLATE": "dir::../tt/tech/gf180mcuD/def/tt_block_3x4_pgvdd.def",
+  "DIE_AREA": "0 0 1440.32 325.36",
+  "FP_DEF_TEMPLATE": "dir::../tt/tech/gf180mcuD/def/tt_block_4x2_pgvdd.def",
   "VDD_PIN": "VPWR",
   "GND_PIN": "VGND",
   "RT_MAX_LAYER": "Metal4",

@@ -1,6 +1,6 @@
 {
   "PL_TARGET_DENSITY_PCT": 60,
-  "CLOCK_PERIOD": 70,
+  "CLOCK_PERIOD": 75,
   "PL_RESIZER_HOLD_SLACK_MARGIN": 0.1,
   "GRT_RESIZER_HOLD_SLACK_MARGIN": 0.05,
   "RUN_LINTER": 1,
@@ -33,8 +33,8 @@
     "dir::program_counter.v",
     "dir::register_file.v"
   ],
-  "DIE_AREA": "0 0 1075.76 736.96",
-  "FP_DEF_TEMPLATE": "dir::../tt/tech/gf180mcuD/def/tt_block_3x4_pgvdd.def",
+  "DIE_AREA": "0 0 1440.32 325.36",
+  "FP_DEF_TEMPLATE": "dir::../tt/tech/gf180mcuD/def/tt_block_4x2_pgvdd.def",
   "VDD_PIN": "VPWR",
   "GND_PIN": "VGND",
   "RT_MAX_LAYER": "Metal4",
@@ -73,24 +73,24 @@
       "instances": {
         "ram.bank0": {
           "location": [
-            65,
-            75
+            55,
+            10
           ],
           "orientation": "N"
         },
         "ram.bank1": {
           "location": [
-            410,
-            75
+            660,
+            10
           ],
           "orientation": "N"
         }
       },
       "gds": [
-        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.gds"
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.rotated.gds"
       ],
       "lef": [
-        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.lef"
+        "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1.rotated.lef"
       ],
       "vh": [
         "dir::../build/asic-memory/ocd/cells/gf180mcu_ocd_ip_sram__sram1024x8m8wm1/gf180mcu_ocd_ip_sram__sram1024x8m8wm1__blackbox_pp.v"

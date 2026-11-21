@@ -1,6 +1,8 @@
 # Makefile
 # See https://docs.cocotb.org/en/stable/quickstart.html for more info
 
+.DEFAULT_GOAL := sim
+
 # defaults
 SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
@@ -34,9 +36,16 @@ VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilo
 VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilog/gf180mcu_fd_sc_mcu7t5v0.v
 
 # this gets copied in by the GDS action workflow
-VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
+GATE_NETLIST ?= $(PWD)/gate_level_netlist.v
+VERILOG_SOURCES += $(GATE_NETLIST)
 SRAM_CELL = gf180mcu_ocd_ip_sram__sram1024x8m8wm1
-VERILOG_SOURCES += $(PWD)/../build/asic-memory/ocd/cells/$(SRAM_CELL)/$(SRAM_CELL).v
+SRAM_MODEL = $(PWD)/../build/asic-memory/ocd/cells/$(SRAM_CELL)/$(SRAM_CELL).v
+SRAM_SIM_MODEL = $(abspath $(SIM_BUILD))/$(SRAM_CELL).v
+VERILOG_SOURCES += $(SRAM_SIM_MODEL)
+
+$(SRAM_SIM_MODEL): $(SRAM_MODEL) sram-sim.patch
+	mkdir -p $(@D)
+	patch --batch --fuzz=0 -o $@ $< sram-sim.patch
 
 endif
 

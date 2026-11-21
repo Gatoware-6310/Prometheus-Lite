@@ -1,0 +1,25 @@
+--- upstream.v
++++ simulation.v
+@@ -375 +375,9 @@
+-always @(posedge CLK) marked_a = A;
++reg sampled_write, sampled_read;
++reg [7:0] sampled_data;
++
++always @(posedge CLK) begin
++  marked_a = A;
++  sampled_write = write_flag;
++  sampled_read = read_flag;
++  sampled_data = cd5;
++end
+@@ -385 +393 @@
+-  if (write_flag) begin 	//write
++  if (sampled_write) begin 	//write
+@@ -387 +395 @@
+-      mem[A] = cd5;
++      mem[marked_a] = sampled_data;
+@@ -390 +398 @@
+-      mem[A] = mem[A] ^ cdx;    //1^x = x
++      mem[marked_a] = mem[marked_a] ^ cdx;    //1^x = x
+@@ -394 +402 @@
+-  else if (read_flag) begin     //read
++  else if (sampled_read) begin     //read

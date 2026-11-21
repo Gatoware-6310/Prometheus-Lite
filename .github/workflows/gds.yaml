@@ -21,10 +21,34 @@ jobs:
           path: build/asic-memory/ocd
           persist-credentials: false
 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Rotate SRAM layout and pin views
+        run: |
+          python -m pip install klayout==0.30.7
+          python scripts/rotate-sram.py
+
       - name: Build GDS
         uses: TinyTapeout/tt-gds-action@ttgf26c
         with:
           pdk: gf180mcuD
+
+      - name: Keep internal SRAM power straps out of the shuttle pin list
+        run: python3 scripts/fix-sram-lef.py tt_submission/*.lef
+
+      - name: Publish corrected submission
+        uses: actions/upload-artifact@v7
+        with:
+          name: tt_submission
+          overwrite: true
+          path: |
+            src/*
+            docs/*
+            tt_submission/*
+            info.yaml
+            LICENSE
 
   precheck:
     needs: gds
