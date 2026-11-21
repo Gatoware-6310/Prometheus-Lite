@@ -111,35 +111,33 @@ in no particular order.
 
 ### States
 
-Prometheus Lite currently has **8** states, mostly dominated by fetching instructions due to the aforementioned memory interface. The states are:
+Prometheus Lite currently has **7** states and can fetch an entire instruction in one cycle! Most arithmetic instructions take 4 cycles total.
 
-- `FETCH_A`: Starts fetching the first byte of the instruction
+- `FETCH`: Reads all 3 bytes of the instruction at once (one from each bank)
 
-- `FETCH_B`: Finishes fetching the first byte, starts fetching the second byte
-
-- `FETCH_C`: Finishes fetching the second byte, starts fetching the third byte
-
-- `FETCH_C_WAIT`: Finishes fetching the third byte and decodes the instruction
+- `DECODE`: Puts the opcode and two operands into the instruction register
 
 - `EXECUTE`: Enables the control unit and executes the instruction
 
-- `WRITEBACK`: Although memory operations can occur during `EXECUTE`, this state allows instructions that require an additional step to complete execution. For example, `movfp` reads the register pair during `EXECUTE`, then writes the value to memory during `WRITEBACK`
+- `MEMORY`: Reads or writes a byte at the address figured out during `EXECUTE`
 
-- `REGISTER_WRITEBACK`: This is a parallel to `WRITEBACK`, but for registers. For example, `mova` needs to access memory during `EXECUTE`, and writes the result to the A register during `REGISTER_WRITEBACK`. This state also increments the program counter
+- `WRITEBACK`: Where the cpu goes if the control unit leaves the next state alone and there's no memory access
+
+- `REGISTER_WRITEBACK`: Writes the result into a register if there is one, and adds 3 to the program counter if we didn't jump
 
 - `HALT`: This state is only set when the `hlt` instruction is executed, and the CPU stays in this state forever once it reaches it.
 
-These states currently assume 8 bit, synchronous memory. The amount of states will likely be highly optimized once the actual ASIC sram interface is finished and released.
+Memory is still byte addressed, so you can jump to any byte in RAM like before. If you jump to address 1, for example, the bytes come from banks 1, 2, and 0 in that order.
 
 ### Execution
 
 #### Instruction Decoding
 
-During the `FETCH_C_WAIT` state once all fetching is done, the 24 bit instruction register is decoded into an opcode and two operands. This is quite flimsy and may not work for some memory designs, so the instruction register, fetching, and decoding in general will likely be optimized and fixed up once a firm memory model is established.
+Once `FETCH` is done, `DECODE` saves the 3 bytes in the 24 bit instruction register (one opcode and two operands). The control unit uses those for the rest of the instruction.
 
 #### Arithmetic and General Execution
 
-Prometheus Lite has no dedicated ALU, arithmetic and bitwise operations are implemented directly in the control unit. After most instructions, the CPU state is explicitly advanced to the next required state for normal execution. For example, `movi` immediately skips to the `REGISTER_WRITEBACK` state as that’s where the program counter is incremented, and there is no extra memory writeback required. For `movfp`, however, the next state is not explicitly set, and instead the cpu naturally falls into the writeback state, which is required because the instruction requires multiple memory accesses.
+Prometheus Lite has no dedicated ALU, arithmetic and bitwise operations are implemented directly in the control unit. From `EXECUTE`, `movi` goes straight to `REGISTER_WRITEBACK` since all it has to do is write a register and increment the pc. For `movfp`, `EXECUTE` gets the address from the register pair and `MEMORY` writes the byte there on the next cycle.
 
 #### Flags and Branching
 

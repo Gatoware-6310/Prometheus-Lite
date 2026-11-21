@@ -21,6 +21,8 @@ module tt_um_gatoware_prometheus_lite (
     wire memory_write_enable;
     wire [7:0] memory_write_data;
     wire [7:0] memory_read_data;
+    wire memory_fetch;
+    wire [23:0] memory_instruction;
 
     wire load_program = uio_in[0];
     reg [11:0] load_address;
@@ -39,7 +41,9 @@ module tt_um_gatoware_prometheus_lite (
         .memory_read_enable(memory_read_enable),
         .memory_write_enable(memory_write_enable),
         .memory_write_data(memory_write_data),
-        .memory_read_data(memory_read_data)
+        .memory_read_data(memory_read_data),
+        .memory_fetch(memory_fetch),
+        .memory_instruction(memory_instruction)
     );
 
     wire read_byte = rst_n && !load_program && memory_read_enable;
@@ -55,7 +59,9 @@ module tt_um_gatoware_prometheus_lite (
         .memory_read_enable(read_byte),
         .memory_write_enable(write_byte),
         .write_data(load_program ? ui_in : memory_write_data),
-        .read_data(memory_read_data)
+        .read_data(memory_read_data),
+        .fetch(rst_n && !load_program && memory_fetch),
+        .instruction(memory_instruction)
     );
 
     assign uo_out = memory_address[7:0];

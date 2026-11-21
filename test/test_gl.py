@@ -31,11 +31,12 @@ async def test_arithmetic(dut):
         0x53, 0, 0,   # hlt
     ]
     await load_program(dut, program)
-    for _ in range(40):
+    for cycle in range(1, 41):
         await FallingEdge(dut.clk)
         await Timer(1, unit="ns")
         value = dut.uio_out.value
         if value.is_resolvable and int(value) == 61:
+            assert cycle == 15, f"Expected the store in cycle 15, got {cycle}"
             return
 
     assert False, "CPU did not write the arithmetic result after loading SRAM"
@@ -69,3 +70,54 @@ async def test_program_across_sram_banks(dut):
                 if not expected:
                     return
     assert not expected, f"Missing CPU memory results: {expected}"
+
+
+@cocotb.test()
+async def test_jump_to_modified_code(dut):
+    program = [
+        0x00, 0, 0x00,
+        0x06, 0, 0x10,
+        0x00, 0, 77,
+        0x06, 0, 0x12,
+        0x30, 0, 0x10,
+        0,
+        0x53, 0, 0,
+        0x06, 0, 0xA6,
+        0x53, 0, 0,
+    ]
+    await load_program(dut, program)
+
+    for _ in range(35):
+        await FallingEdge(dut.clk)
+        address, data = dut.uo_out.value, dut.uio_out.value
+        if address.is_resolvable and data.is_resolvable:
+            if (int(address), int(data)) == (0xA6, 77):
+                return
+    assert False, "CPU did not execute the modified instruction"
+
+
+@cocotb.test()
+async def test_multiply_zero_branch_and_stack(dut):
+    program = [
+        0x00, 0x00, 16,
+        0x00, 0x01, 16,
+        0x19, 0x00, 0x01,
+        0x31, 0x00, 0x12,
+        0x53, 0x00, 0x00,
+        0x53, 0x00, 0x00,
+        0x00, 0x00, 0xA7,
+        0x40, 0x00, 0x00,
+        0x00, 0x00, 0x00,
+        0x41, 0x00, 0x00,
+        0x06, 0x00, 0xC0,
+        0x53, 0x00, 0x00,
+    ]
+    await load_program(dut, program)
+
+    for _ in range(60):
+        await FallingEdge(dut.clk)
+        address, data = dut.uo_out.value, dut.uio_out.value
+        if address.is_resolvable and data.is_resolvable:
+            if (int(address), int(data)) == (0xC0, 0xA7):
+                return
+    assert False, "Multiply, conditional jump, or stack readback failed"

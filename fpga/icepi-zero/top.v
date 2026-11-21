@@ -9,6 +9,8 @@ module top (
     wire memory_write_enable;
     wire [7:0] memory_write_data;
     wire [7:0] memory_read_data;
+    wire memory_fetch;
+    wire [23:0] memory_instruction;
     wire reset = ~button[0];
     // trace.ys connects these inputs to existing nets in the flattened CPU.
     wire [11:0] pc, sp;
@@ -23,7 +25,9 @@ module top (
         .memory_read_enable(memory_read_enable),
         .memory_write_enable(memory_write_enable),
         .memory_write_data(memory_write_data),
-        .memory_read_data(memory_read_data)
+        .memory_read_data(memory_read_data),
+        .memory_fetch(memory_fetch),
+        .memory_instruction(memory_instruction)
     );
 
     memory ram (
@@ -32,7 +36,9 @@ module top (
         .memory_read_enable(memory_read_enable),
         .memory_write_enable(memory_write_enable),
         .write_data(memory_write_data),
-        .read_data(memory_read_data)
+        .read_data(memory_read_data),
+        .fetch(memory_fetch),
+        .instruction(memory_instruction)
     );
 
     wire jtck, jtdi, jtdo, jce, jshift, jupdate, jrstn;
