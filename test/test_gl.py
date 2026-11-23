@@ -13,9 +13,13 @@ async def load_program(dut, program, ui=0, gpio=0):
     await ClockCycles(dut.clk, 2)
     await FallingEdge(dut.clk)
     dut.rst_n.value = 1
-    dut.uio_in.value = 3
-    for byte in program:
+    for index, byte in enumerate(program):
         dut.ui_in.value = byte
+        dut.uio_in.value = 3
+        await FallingEdge(dut.clk)
+        if index == 0:
+            await FallingEdge(dut.clk)
+        dut.uio_in.value = 1
         await FallingEdge(dut.clk)
 
     dut.ui_in.value = ui

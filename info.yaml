@@ -50,7 +50,7 @@ pinout:
 
   # Bidirectional pins
   uio[0]: "Program load mode (holds CPU in reset)"
-  uio[1]: "Write next program byte on rising edge"
+  uio[1]: "Write one byte per strobe pulse sampled by clk"
   uio[2]: "GPIO bit 2"
   uio[3]: "GPIO bit 3"
   uio[4]: "GPIO bit 4"

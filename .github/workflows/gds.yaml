@@ -34,6 +34,14 @@ jobs:
           python3 -m venv "$RUNNER_TEMP/artwork"
           "$RUNNER_TEMP/artwork/bin/pip" install gdstk==1.0.2 Pillow==13.0.0
           "$RUNNER_TEMP/artwork/bin/python" scripts/add-artwork.py tt_submission/tt_um_gatoware_prometheus_lite.gds
+          python3 - <<'PY'
+          import klayout.db as db
+
+          layout = db.Layout()
+          layout.read('tt_submission/tt_um_gatoware_prometheus_lite.gds')
+          layout.set_property('TT_PDK', 'gf180mcuD')
+          layout.write('tt_submission/tt_um_gatoware_prometheus_lite.oas')
+          PY
 
       # The Tiny Tapeout action renders its preview before the artwork is added.
       # Re-render the modified submission GDS and replace that stale artifact.

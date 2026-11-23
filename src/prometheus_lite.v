@@ -154,7 +154,7 @@ module prometheus_lite(
         end else begin
             if (state == EXECUTE) begin
                 jumped <= jump_pc;
-                data_address <= opcode == 8'h41 ? stack_pointer + 12'd1 : cu_memory_address;
+                data_address <= cu_memory_address;
                 data_write <= cu_memory_write_data;
                 data_read <= cu_memory_read_enable;
                 data_store <= cu_memory_write_enable;

@@ -481,7 +481,7 @@ module control_unit #(
             end
             if (write_zero && (opcode == MUL ? state == REGISTER_WRITEBACK : enable))
                 zero <= zero_next;
-            if (enable && write_sp)
+            if (write_sp && (opcode == POP ? state == REGISTER_WRITEBACK : enable))
                 stack_pointer <= sp_next;
         end
     end
