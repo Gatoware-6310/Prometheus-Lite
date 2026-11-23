@@ -54,6 +54,7 @@ module control_unit #(
 
     reg[11:0] sp_next;
     reg write_sp;
+    reg stack_fault;
 
     localparam MOVI = 8'h00;
     localparam MOVR = 8'h01;
@@ -388,21 +389,26 @@ module control_unit #(
                 next_state = REGISTER_WRITEBACK;
             end
             PUSH: begin
-                read_register_a = operand_1[1:0]; // get the data to push
-                memory_write_enable = 1;
-                memory_address = stack_pointer;
-                memory_write_data = data_a;
-                sp_next = stack_pointer - 1; // decrement the stack last (empty descending stack)
-                write_sp = 1;
+                read_register_a = operand_1[1:0];
+                if (stack_pointer != 12'h000) begin
+                    memory_write_enable = 1;
+                    memory_address = stack_pointer;
+                    memory_write_data = data_a;
+                    sp_next = stack_pointer - 12'd1;
+                    write_sp = 1;
+                end
             end
             POP: begin
-                sp_next = stack_pointer + 1; // increment first
-                write_sp = 1;
-                rf_write_enable = 1;
-                memory_address = stack_pointer;
-                memory_read_enable = 1;
-                write_register = operand_1[1:0];
-                write_data = memory_read_data;
+                if (stack_pointer != 12'hBFF) begin
+                    // PUSH stores before decrementing SP; POP must read SP + 1.
+                    sp_next = stack_pointer + 12'd1;
+                    write_sp = 1;
+                    rf_write_enable = 1;
+                    memory_address = stack_pointer + 12'd1;
+                    memory_read_enable = 1;
+                    write_register = operand_1[1:0];
+                    write_data = memory_read_data;
+                end
             end
             NOP: begin
                 next_state = REGISTER_WRITEBACK; // just skip to incrementing the pc
@@ -464,7 +470,11 @@ module control_unit #(
         if (reset) begin
             stack_pointer <= 12'hBFF;
             zero <= 0;
+            stack_fault <= 1'b0;
         end else begin
+            if (enable && ((opcode == PUSH && stack_pointer == 12'h000) ||
+                           (opcode == POP && stack_pointer == 12'hBFF)))
+                stack_fault <= 1'b1;
             if (enable && opcode == MUL) begin
                 mul_a <= data_a;
                 mul_b <= data_b;
