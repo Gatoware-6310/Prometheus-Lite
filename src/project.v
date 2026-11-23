@@ -32,12 +32,18 @@ module tt_um_gatoware_prometheus_lite (
 
     wire load_program = uio_in[0];
     reg [11:0] load_address;
+    reg load_strobe_previous;
+    wire load_write = load_program && uio_in[1] && !load_strobe_previous && (load_address < 12'hC00);
 
     always @(posedge clk) begin
-        if (!rst_n || !load_program)
+        if (!rst_n || !load_program) begin
             load_address <= 0;
-        else if (uio_in[1])
-            load_address <= load_address + 1'b1;
+            load_strobe_previous <= 1'b0;
+        end else begin
+            load_strobe_previous <= uio_in[1];
+            if (load_write)
+                load_address <= load_address + 1'b1;
+        end
     end
 
     prometheus_lite cpu (
@@ -57,7 +63,7 @@ module tt_um_gatoware_prometheus_lite (
     );
 
     wire read_byte = rst_n && !load_program && memory_read_enable;
-    wire write_byte = rst_n && (load_program ? uio_in[1] : memory_write_enable);
+    wire write_byte = rst_n && (load_program ? load_write : memory_write_enable);
 
 `ifdef PROMETHEUS_ASIC_SRAM
     memory_asic ram (
@@ -81,7 +87,7 @@ module tt_um_gatoware_prometheus_lite (
 
     assign uo_out = output_latch;
     assign uio_out = {gpio_latch, 2'b00};
-    assign uio_oe = {gpio_direction, 2'b00};
+    assign uio_oe = (rst_n && !load_program) ? {gpio_direction, 2'b00} : 8'b0;
 
     always @* begin
         case (io_address)
