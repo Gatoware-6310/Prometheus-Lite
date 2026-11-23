@@ -88,8 +88,26 @@ Register pairs are encoded as 0x00, and 0x01, for the first and second register 
 | `0x37` | `jnzp [pair]` | Jumps to the memory address pointed to by the selected register pair if the zero flag is 0                                                         |
 | `0x40` | `push [register]` | Pushes the contents of the selected register to the stack                                                                                          |
 | `0x41` | `pop [register]` | Pops from the stack into the selected register                                                                                                     |
+| `0x50` | `in [register], [address]` | Takes an input from the selected IO pin address                                                                                                      |
+| `0x51` | `out [register], [address]` | Sends an output to the selected IO pin                                                                                                                               |
 | `0x52` | `nop` | Does nothing!                                                                                                                                      |
 | `0x53` | `hlt` | Permanently halts execution                                                                                                                        |
+
+### IO addresses
+
+| Address | `in` | `out` |
+|---|---|---|
+| `0x00` | Read all `ui` bits | |
+| `0x01` | Read the `uo` latch | Write all `uo` bits |
+| `0x02` | Read `uio[7:2]` | Write the `uio[7:2]` latch |
+| `0x03` | Read the direction mask | Set the direction mask |
+| `0x10`–`0x17` | Read `ui[0]`–`ui[7]` | |
+| `0x20`–`0x27` | Read one `uo` latch bit | Write `uo[0]`–`uo[7]` |
+| `0x32`–`0x37` | Read one `uio` bit | Write the latch for `uio[2]`–`uio[7]` |
+
+Single pin reads return 0 or 1 and single pin writes use bit 0 of the register. The `uio` direction mask uses the pin numbers as bit numbers. A 1 drives the pin and a 0 leaves it as an input. For example, writing 16 to `0x03` makes only `uio[4]` an output. A read from a GPIO output returns its latch value. Reset and program loading clear all output latches and release the GPIO pins. `uio[0]` and `uio[1]` are for loading programs.
+
+Unmapped reads return 0 and unmapped writes do nothing. Keep external inputs stable around the clock edge that finishes `in`.
 
 ## Implementation
 

@@ -9,7 +9,11 @@ module prometheus_lite(
     output wire [7:0] memory_write_data,
     input wire [7:0] memory_read_data,
     output wire memory_fetch,
-    input wire [23:0] memory_instruction
+    input wire [23:0] memory_instruction,
+    output wire [7:0] io_address,
+    input  wire [7:0] io_read_data,
+    output wire [7:0] io_write_data,
+    output wire       io_write_enable
 );
     /* Flags */
     wire zero;
@@ -104,6 +108,10 @@ module prometheus_lite(
         .memory_address(cu_memory_address),
         .memory_write_data(cu_memory_write_data),
         .memory_read_data(memory_read_data),
+        .io_address(io_address),
+        .io_read_data(io_read_data),
+        .io_write_data(io_write_data),
+        .io_write_enable(io_write_enable),
         .state(state),
         .next_state(next_state),
         .zero(zero),

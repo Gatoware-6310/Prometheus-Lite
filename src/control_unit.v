@@ -1,7 +1,7 @@
 module control_unit #(
-    parameter [2:0] FETCH = 3'd0,
-    parameter [2:0] REGISTER_WRITEBACK = 3'd5,
-    parameter [2:0] HALT = 3'd6
+    parameter[2:0] FETCH = 3'd0,
+    parameter[2:0] REGISTER_WRITEBACK = 3'd5,
+    parameter[2:0] HALT = 3'd6
 ) (
     input wire clk,
     input wire enable,
@@ -39,7 +39,13 @@ module control_unit #(
     output reg memory_write_enable,
     output reg[11:0] memory_address,
     output reg[7:0] memory_write_data,
-    input wire[7:0] memory_read_data
+    input wire[7:0] memory_read_data,
+
+    /* I/O STUFF */
+    output wire[7:0] io_address,
+    input  wire[7:0] io_read_data,
+    output wire[7:0] io_write_data,
+    output wire io_write_enable
 );
 
     reg zero_next;
@@ -81,9 +87,14 @@ module control_unit #(
     localparam JNZP = 8'h37;
     localparam PUSH = 8'h40;
     localparam POP = 8'h41;
+    localparam IN = 8'h50;
+    localparam OUT = 8'h51;
     localparam NOP = 8'h52;
     localparam HLT = 8'h53;
 
+    assign io_address = operand_2; // Constantly set it so that as soon as we get the right opcode it'll work
+    assign io_write_data = data_a;
+    assign io_write_enable = enable && !reset && opcode == OUT;
 
     always@(*) begin
         rf_write_enable = 0;
@@ -429,6 +440,18 @@ module control_unit #(
                 end
                 next_state = REGISTER_WRITEBACK;
             end
+
+            IN: begin
+                rf_write_enable = 1;
+                write_register = operand_1[1:0];
+                write_data = io_read_data;
+                next_state = REGISTER_WRITEBACK;
+            end
+            OUT: begin
+                read_register_a = operand_1[1:0];
+                next_state = REGISTER_WRITEBACK;
+            end
+
 
             default: begin
                 // illegal instruction! maybe an exception register later?

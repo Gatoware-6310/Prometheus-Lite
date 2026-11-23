@@ -1,6 +1,8 @@
 module top (
     input wire clk,
     input wire [1:0] button,
+    input wire usb_rx,
+    output wire usb_tx,
     output wire [4:0] led
 );
 
@@ -9,36 +11,27 @@ module top (
     wire memory_write_enable;
     wire [7:0] memory_write_data;
     wire [7:0] memory_read_data;
-    wire memory_fetch;
-    wire [23:0] memory_instruction;
-    wire reset = ~button[0];
+    wire load, write_byte, reset_project;
+    wire [7:0] ui, uo, uio_out, uio_oe;
+    wire [7:2] gpio_input;
+    wire rst_n = button[0] && !reset_project;
+    wire reset = !rst_n || load;
     // trace.ys connects these inputs to existing nets in the flattened CPU.
     wire [11:0] pc, sp;
     wire [2:0] state;
     wire [7:0] opcode, register_a, register_b, register_c, register_d;
     wire zero;
 
-    prometheus_lite cpu (
-        .clk(clk),
-        .reset(reset),
-        .memory_address(memory_address),
-        .memory_read_enable(memory_read_enable),
-        .memory_write_enable(memory_write_enable),
-        .memory_write_data(memory_write_data),
-        .memory_read_data(memory_read_data),
-        .memory_fetch(memory_fetch),
-        .memory_instruction(memory_instruction)
+    uart_bridge bridge (
+        .clk(clk), .reset(!button[0]), .rx(usb_rx), .tx(usb_tx),
+        .ui(ui), .gpio_input(gpio_input), .uo(uo), .uio_out(uio_out), .uio_oe(uio_oe),
+        .load(load), .write_byte(write_byte), .reset_project(reset_project)
     );
 
-    memory ram (
-        .clk(clk),
-        .address(memory_address),
-        .memory_read_enable(memory_read_enable),
-        .memory_write_enable(memory_write_enable),
-        .write_data(memory_write_data),
-        .read_data(memory_read_data),
-        .fetch(memory_fetch),
-        .instruction(memory_instruction)
+    tt_um_gatoware_prometheus_lite project (
+        .clk(clk), .rst_n(rst_n), .ena(1'b1),
+        .ui_in(ui), .uo_out(uo), .uio_in({gpio_input & ~uio_oe[7:2], write_byte, load}),
+        .uio_out(uio_out), .uio_oe(uio_oe)
     );
 
     wire jtck, jtdi, jtdo, jce, jshift, jupdate, jrstn;
@@ -55,6 +48,6 @@ module top (
         .jce(jce), .jshift(jshift), .jupdate(jupdate), .jrstn(jrstn)
     );
 
-    assign led = 5'b00000;
+    assign led = uo[7:3];
 
 endmodule

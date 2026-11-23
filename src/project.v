@@ -24,6 +24,12 @@ module tt_um_gatoware_prometheus_lite (
     wire memory_fetch;
     wire [23:0] memory_instruction;
 
+    wire [7:0] io_address, io_write_data;
+    wire io_write_enable;
+    reg [7:0] io_read_data;
+    reg [7:0] output_latch;
+    reg [7:2] gpio_latch, gpio_direction;
+
     wire load_program = uio_in[0];
     reg [11:0] load_address;
 
@@ -43,7 +49,11 @@ module tt_um_gatoware_prometheus_lite (
         .memory_write_data(memory_write_data),
         .memory_read_data(memory_read_data),
         .memory_fetch(memory_fetch),
-        .memory_instruction(memory_instruction)
+        .memory_instruction(memory_instruction),
+        .io_address(io_address),
+        .io_read_data(io_read_data),
+        .io_write_data(io_write_data),
+        .io_write_enable(io_write_enable)
     );
 
     wire read_byte = rst_n && !load_program && memory_read_enable;
@@ -64,9 +74,51 @@ module tt_um_gatoware_prometheus_lite (
         .instruction(memory_instruction)
     );
 
-    assign uo_out = memory_address[7:0];
-    assign uio_out = memory_write_data;
-    assign uio_oe = 8'hfc;
+    wire [7:0] gpio_value = {
+        (uio_in[7:2] & ~gpio_direction) | (gpio_latch & gpio_direction),
+        2'b00
+    };
 
-    wire _unused = &{ena, uio_in[7:2], 1'b0};
+    assign uo_out = output_latch;
+    assign uio_out = {gpio_latch, 2'b00};
+    assign uio_oe = {gpio_direction, 2'b00};
+
+    always @* begin
+        case (io_address)
+            8'h00: io_read_data = ui_in;
+            8'h01: io_read_data = output_latch;
+            8'h02: io_read_data = gpio_value;
+            8'h03: io_read_data = {gpio_direction, 2'b00};
+            default: begin
+                case (io_address[7:3])
+                    5'h02: io_read_data = {7'b0, ui_in[io_address[2:0]]};
+                    5'h04: io_read_data = {7'b0, output_latch[io_address[2:0]]};
+                    5'h06: io_read_data = {7'b0, gpio_value[io_address[2:0]]};
+                    default: io_read_data = 8'h00;
+                endcase
+            end
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (!rst_n || load_program) begin
+            output_latch <= 0;
+            gpio_latch <= 0;
+            gpio_direction <= 0;
+        end else if (io_write_enable) begin
+            case (io_address)
+                8'h01: output_latch <= io_write_data;
+                8'h02: gpio_latch <= io_write_data[7:2];
+                8'h03: gpio_direction <= io_write_data[7:2];
+                default: begin
+                    if (io_address[7:3] == 5'h04)
+                        output_latch[io_address[2:0]] <= io_write_data[0];
+                    if (io_address >= 8'h32 && io_address <= 8'h37)
+                        gpio_latch[io_address[2:0]] <= io_write_data[0];
+                end
+            endcase
+        end
+    end
+
+    wire _unused = &{ena, 1'b0};
 endmodule

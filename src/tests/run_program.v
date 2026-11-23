@@ -28,7 +28,8 @@ prometheus_lite dut(
     .memory_write_data(memory_write_data),
     .memory_read_data(memory_read_data),
     .memory_fetch(memory_fetch),
-    .memory_instruction(memory_instruction)
+    .memory_instruction(memory_instruction),
+    .io_read_data(8'h00)
 );
 
 memory ram(

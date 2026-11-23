@@ -29,34 +29,34 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "Program load byte bit 0"
-  ui[1]: "Program load byte bit 1"
-  ui[2]: "Program load byte bit 2"
-  ui[3]: "Program load byte bit 3"
-  ui[4]: "Program load byte bit 4"
-  ui[5]: "Program load byte bit 5"
-  ui[6]: "Program load byte bit 6"
-  ui[7]: "Program load byte bit 7"
+  ui[0]: "Input port bit 0 (program byte during load)"
+  ui[1]: "Input port bit 1 (program byte during load)"
+  ui[2]: "Input port bit 2 (program byte during load)"
+  ui[3]: "Input port bit 3 (program byte during load)"
+  ui[4]: "Input port bit 4 (program byte during load)"
+  ui[5]: "Input port bit 5 (program byte during load)"
+  ui[6]: "Input port bit 6 (program byte during load)"
+  ui[7]: "Input port bit 7 (program byte during load)"
 
   # Outputs
-  uo[0]: "Memory address bit 0"
-  uo[1]: "Memory address bit 1"
-  uo[2]: "Memory address bit 2"
-  uo[3]: "Memory address bit 3"
-  uo[4]: "Memory address bit 4"
-  uo[5]: "Memory address bit 5"
-  uo[6]: "Memory address bit 6"
-  uo[7]: "Memory address bit 7"
+  uo[0]: "Output port bit 0"
+  uo[1]: "Output port bit 1"
+  uo[2]: "Output port bit 2"
+  uo[3]: "Output port bit 3"
+  uo[4]: "Output port bit 4"
+  uo[5]: "Output port bit 5"
+  uo[6]: "Output port bit 6"
+  uo[7]: "Output port bit 7"
 
   # Bidirectional pins
   uio[0]: "Program load mode (holds CPU in reset)"
   uio[1]: "Write next program byte on rising edge"
-  uio[2]: "Memory write data bit 2"
-  uio[3]: "Memory write data bit 3"
-  uio[4]: "Memory write data bit 4"
-  uio[5]: "Memory write data bit 5"
-  uio[6]: "Memory write data bit 6"
-  uio[7]: "Memory write data bit 7"
+  uio[2]: "GPIO bit 2"
+  uio[3]: "GPIO bit 3"
+  uio[4]: "GPIO bit 4"
+  uio[5]: "GPIO bit 5"
+  uio[6]: "GPIO bit 6"
+  uio[7]: "GPIO bit 7"
 
 
 # Do not change!

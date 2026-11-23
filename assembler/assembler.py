@@ -180,6 +180,18 @@ def assemble_instruction(instruction):
             data.append(0x37)
             data.append(get_pair(operands[0]))
             data.append(0x00)
+        case 'in':
+            if len(operands) != 2:
+                raise_error("in requires a register and an I/O address")
+            data.append(0x50)
+            data.append(get_register(operands[0]))
+            data.append(immediate(int(operands[1], 0)))
+        case 'out':
+            if len(operands) != 2:
+                raise_error("out requires a register and an I/O address")
+            data.append(0x51)
+            data.append(get_register(operands[0]))
+            data.append(immediate(int(operands[1], 0)))
         case _:
             raise_error("Illegal instruction encountered: " + opcode)
             return

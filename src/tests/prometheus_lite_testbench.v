@@ -16,6 +16,10 @@ wire [7:0] memory_write_data;
 wire [7:0] memory_read_data;
 wire memory_fetch;
 wire [23:0] memory_instruction;
+wire [7:0] io_address, io_write_data;
+wire io_write_enable;
+wire [7:0] io_read_data = io_address == 8'h12 ? 8'hA5 : 8'h00;
+integer io_writes = 0;
 
 
 always #5 clk = ~clk;
@@ -29,8 +33,20 @@ prometheus_lite dut(
     .memory_write_data(memory_write_data),
     .memory_read_data(memory_read_data),
     .memory_fetch(memory_fetch),
-    .memory_instruction(memory_instruction)
+    .memory_instruction(memory_instruction),
+    .io_address(io_address),
+    .io_read_data(io_read_data),
+    .io_write_data(io_write_data),
+    .io_write_enable(io_write_enable)
 );
+
+always @(posedge clk) begin
+    if (!reset && io_write_enable) begin
+        if (io_address !== 8'h23 || io_write_data !== 8'hA5)
+            $fatal(1, "OUT TEST address %h data %h [FAIL]", io_address, io_write_data);
+        io_writes <= io_writes + 1;
+    end
+end
 
 memory ram(
     .clk(clk),
@@ -311,10 +327,20 @@ initial begin
     ram.load_byte(243, 8'h00);
     ram.load_byte(244, 8'h00);
 
+    // in b, 0x12
+    ram.load_byte(260, 8'h50);
+    ram.load_byte(261, 8'h01);
+    ram.load_byte(262, 8'h12);
+
+    // out b, 0x23
+    ram.load_byte(263, 8'h51);
+    ram.load_byte(264, 8'h01);
+    ram.load_byte(265, 8'h23);
+
     // halt
-    ram.load_byte(260, 8'h53);
-    ram.load_byte(261, 8'h00);
-    ram.load_byte(262, 8'h00);
+    ram.load_byte(266, 8'h53);
+    ram.load_byte(267, 8'h00);
+    ram.load_byte(268, 8'h00);
 
     // put a number into the memory address, 0x100
     ram.load_byte(256, 255);
@@ -477,7 +503,16 @@ initial begin
     else
         $fatal(1, "JUMP IF NOT ZERO FROM POINTER %d [FAIL]", dut.value_pc);
 
+    wait(dut.value_pc == 263);
+    @(negedge clk);
+    if (dut.rf.registers[1] !== 8'hA5)
+        $fatal(1, "IN TEST %h [FAIL]", dut.rf.registers[1]);
+    $display("IN TEST %h [PASS]", dut.rf.registers[1]);
+
     wait(dut.state == dut.HALT); // wait till halted
+    if (io_writes != 1)
+        $fatal(1, "OUT TEST %0d writes [FAIL]", io_writes);
+    $display("OUT TEST [PASS]");
     $display("HALT TEST [PASS]"); // there's no way we get here unless it's halted so i'm just gonna be lazy
 
     $display("ALL TESTS PASSSSSSSSSSSSSSSSSSSS!!!");
