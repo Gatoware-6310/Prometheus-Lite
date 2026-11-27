@@ -104,7 +104,9 @@ Register pairs are encoded as 0x00, and 0x01, for the first and second register 
 | `0x52` | `nop` | Does nothing!                                                                                                                                      |
 | `0x53` | `hlt` | Permanently halts execution                                                                                                                        |
 
-### IO addresses
+### IO and Program Loading
+
+#### IO Addresses
 
 | Address | `in` | `out` |
 |---|---|---|
@@ -116,9 +118,12 @@ Register pairs are encoded as 0x00, and 0x01, for the first and second register 
 | `0x20`–`0x27` | Read one `uo` latch bit | Write `uo[0]`–`uo[7]` |
 | `0x32`–`0x37` | Read one `uio` bit | Write the latch for `uio[2]`–`uio[7]` |
 
-Single pin reads return 0 or 1 and single pin writes use bit 0 of the register. The `uio` direction mask uses the pin numbers as bit numbers. A 1 drives the pin and a 0 leaves it as an input. For example, writing 16 to `0x03` makes only `uio[4]` an output. A read from a GPIO output returns its latch value. Reset and program loading clear all output latches and release the GPIO pins. `uio[0]` and `uio[1]` are for loading programs.
+Single pin reads return 0 or 1 and single pin writes use **bit 0** of the register. The `uio` direction mask uses the pin numbers as bit numbers. A 1 drives the pin and a 0 leaves it as an input. For example, writing 16 to `0x03` makes only `uio[4]` an output. Reading from a GPIO output returns the last value written to it. Resetting the CPU or loading a program clears all of the stored output values and stops the CPU from driving the bidirectional pins. `uio[0]` and `uio[1]` are reserved for program loading.
 
-Unmapped reads return 0 and unmapped writes do nothing. Keep external inputs stable around the clock edge that finishes `in`.
+#### Program Loading
+`uio[0]` enables program loading mode, and `uio[1]` writes the byte in `ui[7:0]` to the next memory address.
+
+For example, if you wanted to load `movi b, 63`, the assembler would produce `00 01 3F`. To load this as a program, set `uio[0]` to HIGH (this must be set THROUGHOUT program loading), then set `ui[7:0]` to the byte you want to write, set `uio[1]` to HIGH for at least one rising clock edge, then LOW for at least one rising clock edge before repeating the cycle. When you're done writing, set `uio[0]` to LOW. The loading address internally starts at `0x000` and increments with every successful write.
 
 ## Implementation
 
@@ -153,8 +158,6 @@ Prometheus Lite currently has **6** states and can fetch an entire instruction i
 - `REGISTER_WRITEBACK`: Writes the result into a register if there is one, and adds 3 to the program counter if we didn't jump
 
 - `HALT`: This state is only set when the `hlt` instruction is executed, and the CPU stays in this state forever once it reaches it.
-
-Memory is still byte addressed, so you can jump to any byte in RAM like before. If you jump to address 1, for example, the bytes come from banks 1, 2, and 0 in that order.
 
 ### Execution
 
@@ -210,7 +213,25 @@ Binary:
 
 ## Tests
 
-Prometheus Lite’s functionality is tested through one testbench that initializes the CPU’s memory with lots of instructions, then lets the CPU naturally execute and see if the registers, program counter, instruction register, stack pointer, and memory values align with the expected values. If they do, tests pass, if not, tests fail.
+Prometheus Lite’s functionality is tested through two testbenches (one custom testbench and one for the tiny-tapeout github workflow) that initialize the CPU’s memory with lots of instructions, then let the CPU naturally execute and see if the registers, program counter, instruction register, stack pointer, and memory values align with the expected values. If they do, tests pass, if not, tests fail.
+
+Physical verification has been done on an Icepi Zero FPGA board, including testing program loading, regular program execution, general IO, and verifying waveforms to ensure they match results.
+
+The following are various proofs that the design works as intended on real hardware.
+
+Firstly, a digital waveform of a simple program being loaded and executed, working entirely as intended.
+
+![FPGA program loading waveform](docs/images/fpga-program-loading.png)
+
+![FPGA program execution waveform](docs/images/fpga-program-running.png)
+
+Secondly, a video of Prometheus Lite counting to the 5-bit integer limit through IO pins mapped to the FPGA's onboard LEDS
+
+[Watch the FPGA LED counting demo](docs/images/PROMETHEUS_LITE.mp4)
+
+Finally, a screenshot of a USB/UART serial interface, running entirely on Prometheus Lite streaming text to a terminal on my PC
+
+![Prometheus Lite UART output in a terminal](docs/images/fpga-uart-terminal.png)
 
 ![CPU test results](docs/images/test-results.png)
 
@@ -224,23 +245,12 @@ Although, I don’t think hackatime is accounting for *everything*. I’d say I 
 
 ## What I Learned and Where I Went Wrong
 
-Throughout my time developing Prometheus Lite, I seriously refined my knowledge on exactly how computers work at the lowest level - the added constraint of not vibecoding whatsoever made it much more fun, drawn out, and educational than I initially anticipated, and even rekindled my love for programming entirely on my own in a way. 
+Throughout my time developing Prometheus Lite, I seriously refined my knowledge on exactly how computers work at the lowest level - the added constraint of not vibecoding whatsoever made it much more fun, drawn out, and educational than I initially anticipated, and even rekindled my love for programming entirely on my own in a way.
 
-That being said, the development cycle was not without its failures. Since this was technically my first Verilog design, I consistently (especially in the early stages) had to fight through millions of confusing syntax errors (my Verilog linter in VSCode is a bit broken) only to find that a test was failing anyway. It took me a long time to debug these sorts of errors, but I got through it. 
+That being said, the development cycle was not without its failures. Since this was technically my first Verilog design, I consistently (especially in the early stages) had to fight through millions of confusing syntax errors (my Verilog linter in VSCode is a bit broken) only to find that a test was failing anyway. It took me a long time to debug these sorts of errors, but I got through it.
 
-Despite that, the feeling of victory when I finally realized what was going wrong or exactly how to make something work that I'd been staring at for an hour always outweighed the failures. Now, I've had similar feelings for almost all of my other projects, but this one is different. I think that this is by far the hardest thing I've ever done, my greatest accomplishment, and the culmination of all my CS related efforts thus far. 
+Despite that, the feeling of victory when I finally realized what was going wrong or exactly how to make something work that I'd been staring at for an hour always outweighed the failures. Now, I've had similar feelings for almost all of my other projects, but this one is different. I think that this is by far the hardest thing I've ever done, my greatest accomplishment, and the culmination of all my Computer Science related efforts thus far.
 
 In summary, I learned a lot from the development of Prometheus Lite, including exactly what makes a computer tick, how to write Verilog, and exactly how chip design works internally, a point I never thought that I would reach myself!
-
-## Conclusion, Notes and Next Steps
-
-- This design is absolutely not final, but I’ve done pretty much everything I can in digital simulations for now. At this point, I’m going to submit the project, and refine it/add more features/optimize it as soon as I get the FPGA.
-
-- I want to add a way to interface with external devices, so, inspired by x86, I will likely implement `in/out` instructions once I get the FPGA and everything related to the actual ASIC is finalized.
-
-- On the final ASIC design, I intend to add some silicon art. I've done research, and Tiny Tapeout seems to support it!
-
-- This design **does** work with GTKWave, and produces the expected signals, as shown below.
-  ![Prometheus Lite GTKWave simulation](docs/images/gtkwave.png)
 
 Thank you for reading!!!!
