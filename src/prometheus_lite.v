@@ -57,7 +57,7 @@ module prometheus_lite(
     localparam [2:0] DECODE = 3'd1;
     localparam [2:0] EXECUTE = 3'd2;
     localparam [2:0] MEMORY = 3'd3;
-    localparam [2:0] WRITEBACK = 3'd4;
+    // localparam [2:0] WRITEBACK = 3'd4; redundant!
     localparam [2:0] REGISTER_WRITEBACK = 3'd5;
     localparam [2:0] HALT = 3'd6;
 
@@ -169,10 +169,7 @@ module prometheus_lite(
                         state <= REGISTER_WRITEBACK;
                     else if (next_state != state)
                         state <= next_state;
-                    else
-                        state <= WRITEBACK;
                 MEMORY: state <= REGISTER_WRITEBACK;
-                WRITEBACK: state <= REGISTER_WRITEBACK;
                 REGISTER_WRITEBACK: state <= FETCH;
                 HALT: state <= HALT;
                 default: state <= FETCH;

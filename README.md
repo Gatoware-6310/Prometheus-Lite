@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Prometheus Lite is a custom 8-bit CPU designed and written entirely from scratch in Verilog, and entirely without AI. I started this project intending to take my passion for Computer Science one step further - creating a computer that would actually be manufactured in silicon. I have actually created CPU’s before, Prometheus-1 and Prometheus-2.1 both preceded Prometheus Lite, but both were largely AI assisted and not truly *mine* (on that note, Prometheus Lite doubles as my introduction to Verilog, so the code might not be very good by traditional standards).
+Prometheus Lite is a custom 8-bit CPU taking up 12 (3x4) tiny tapeout tiles designed and written entirely from scratch in Verilog, and entirely without AI. I started this project intending to take my passion for Computer Science one step further - creating a computer that would actually be manufactured in silicon. I have actually created CPU’s before, Prometheus-1 and Prometheus-2.1 both preceded Prometheus Lite, but both were largely AI assisted and not truly *mine* (on that note, Prometheus Lite doubles as my introduction to Verilog, so the code might not be very good by traditional standards).
 
 Source code and the latest (passing!) workflows can be found at [https://github.com/Gatoware-6310/Prometheus-Lite/](https://github.com/Gatoware-6310/Prometheus-Lite/)
 
@@ -28,7 +28,18 @@ This will move the immediate value 63 into the `b` register. In hexadecimal, eac
 
 ### Memory
 
-Currently, the memory interface supports 3 KiB of synchronous, single-port memory at `0x000`–`0xBFF`. Reads at `0xC00`–`0xFFF` return zero and writes there are ignored. The interface I’m using is intentionally a bit ambiguous until the actual wrappers are released, the entire CPU will be adapted once they are.
+Prometheus Lite contains three banks of 1024x8 bit SRAM macros on the chip, totaling 3072 bytes of memory.
+All three memory banks are interleaved, allowing for byte addressing and one instruction (3 bytes) to be fetched and decoded in two clock cycles. As such, each consecutive byte is stored in the next bank, for example;
+
+| Byte Address | Memory bank | Row |
+| 0x000 | Bank 0 | 0x000 |
+| 0x001 | Bank 1 | 0x000 |
+| 0x002 | Bank 2 | 0x000 |
+| 0x003 | Bank 0 | 0x001 |
+| 0x004 | Bank 1 | 0x001 |
+| 0x005 | Bank 2 | 0x001 |
+
+The bank of a given memory address is decided by `address % 3`. The row (local address within the bank), is decided by `address / 3`.
 
 Memory can be interfaced either directly or via the stack.
 
@@ -133,11 +144,11 @@ Prometheus Lite currently has **7** states and can fetch an entire instruction i
 
 - `FETCH`: Reads all 3 bytes of the instruction at once (one from each bank)
 
-- `DECODE`: Puts the opcode and two operands into the instruction register
+- `DECODE`: Finishes the memory read from `FETCH`, and puts the opcode and two operands into the instruction register to be decoded
 
 - `EXECUTE`: Enables the control unit and executes the instruction
 
-- `MEMORY`: Reads or writes a byte at the address figured out during `EXECUTE`
+- `MEMORY`: Completes memory writes set during `EXECUTE`
 
 - `WRITEBACK`: Where the cpu goes if the control unit leaves the next state alone and there's no memory access
 
