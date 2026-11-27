@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Prometheus Lite is a custom 8-bit CPU taking up 12 (3x4) tiny tapeout tiles designed and written entirely from scratch in Verilog, and entirely without AI. I started this project intending to take my passion for Computer Science one step further - creating a computer that would actually be manufactured in silicon. I have actually created CPU’s before, Prometheus-1 and Prometheus-2.1 both preceded Prometheus Lite, but both were largely AI assisted and not truly *mine* (on that note, Prometheus Lite doubles as my introduction to Verilog, so the code might not be very good by traditional standards).
+Prometheus Lite is a custom 8-bit CPU running at 15.15 MHZ taking up 12 (3x4) tiny tapeout tiles designed and written entirely from scratch in Verilog, and entirely without AI. I started this project intending to take my passion for Computer Science one step further - creating a computer that would actually be manufactured in silicon. I have actually created CPU’s before, Prometheus-1 and Prometheus-2.1 both preceded Prometheus Lite, but both were largely AI assisted and not truly *mine* (on that note, Prometheus Lite doubles as my introduction to Verilog, so the code might not be very good by traditional standards).
 
 Source code and the latest (passing!) workflows can be found at [https://github.com/Gatoware-6310/Prometheus-Lite/](https://github.com/Gatoware-6310/Prometheus-Lite/)
 
