@@ -148,7 +148,7 @@ Prometheus Lite currently has **7** states and can fetch an entire instruction i
 
 - `EXECUTE`: Enables the control unit and executes the instruction
 
-- `MEMORY`: Completes memory writes set during `EXECUTE`
+- `MEMORY`: Completes memory writes requested during `EXECUTE`
 
 - `WRITEBACK`: Where the cpu goes if the control unit leaves the next state alone and there's no memory access
 

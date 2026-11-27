@@ -1,7 +1,7 @@
 module control_unit #(
     parameter[2:0] FETCH = 3'd0,
-    parameter[2:0] REGISTER_WRITEBACK = 3'd5,
-    parameter[2:0] HALT = 3'd6
+    parameter[2:0] REGISTER_WRITEBACK = 3'd4,
+    parameter[2:0] HALT = 3'd5
 ) (
     input wire clk,
     input wire enable,
