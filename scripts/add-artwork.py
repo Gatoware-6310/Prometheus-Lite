@@ -98,9 +98,42 @@ def layout(top, assets):
         if bottom:
             break
     if bottom is None:
-        raise SystemExit('No clear placement for the wordmark')
+        # Try a compact wordmark anywhere in the bottom strip before giving up.
+        for pitch in (4.4, 3.6, 3.0, 2.4, 1.8):
+            pixels = [(i * 6 + dx, dy) for i, glyph in enumerate(letters)
+                      for dx, dy in glyph]
+            width = (max(x for x, _ in pixels) + 1) * pitch
+            for y in range(int(y1) + 6, min(int(y2) - 8, int(y1) + 100), 2):
+                for x in range(int(x2 - width - 6), int(x1) + 5, -4):
+                    shapes = draw(pixels, x, y, pitch, pitch, .42)
+                    if all(map(clear, shapes)):
+                        bottom = [('prometheus_lite_wordmark', shapes)]
+                        break
+                if bottom:
+                    break
+            if bottom:
+                break
+    if bottom is None:
+        print('WARNING: No clear placement for the wordmark; skipping it')
+        bottom = []
 
     designs = list(bottom)
+    for _, shapes in designs:
+        for l, b, r, t in shapes:
+            add_obstacle(obstacles, ((l, b), (r, t)), .42)
+    # Place the two bottom icons independently if the original arrangement failed.
+    for idx in (9, 10):
+        name = f'prometheus_art_{idx:02}'
+        if any(n == name for n, _ in designs):
+            continue
+        icon = find_icon(mask[idx], (x1+5, y1+5, x2-5, min(y1+85, y2-5)),
+                         (x1+400, y1+25), clear)
+        if icon is None:
+            print(f'WARNING: No clear placement for artwork {idx:02}; skipping it')
+            continue
+        designs.append((name, icon))
+        add_obstacle(obstacles, ((min(r[0] for r in icon), min(r[1] for r in icon)),
+                                 (max(r[2] for r in icon), max(r[3] for r in icon))), 3)
     for row in range(2):
         for col in range(6):
             idx = TOP_ART[row * 6 + col]
@@ -111,7 +144,8 @@ def layout(top, assets):
             if icon is None:
                 icon = find_icon(mask[idx], (748, 600, 1068, 730), target, clear)
             if icon is None:
-                raise SystemExit(f'No clear placement for artwork {idx:02}')
+                print(f'WARNING: No clear placement for artwork {idx:02}; skipping it')
+                continue
             designs.append((f'prometheus_art_{idx:02}', icon))
             add_obstacle(obstacles, ((min(r[0] for r in icon), min(r[1] for r in icon)),
                                      (max(r[2] for r in icon), max(r[3] for r in icon))), 3)
