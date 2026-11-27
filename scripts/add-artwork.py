@@ -47,7 +47,8 @@ def layout(top, assets):
         add_obstacle(obstacles, polygon.bounding_box(), 1)
     for ref in top.references:
         name = ref.cell_name.removeprefix(CELL_PREFIX)
-        if name != ref.cell_name and not name.startswith(('fill', 'endcap', 'tap')):
+        if (ref.cell_name.startswith('gf180mcu_ocd_ip_sram__') or
+                name != ref.cell_name and not name.startswith(('fill', 'endcap', 'tap'))):
             add_obstacle(obstacles, ref.bounding_box(), 0.5)
 
     def clear(box):
@@ -63,18 +64,28 @@ def layout(top, assets):
                 for col in range(5) if bits & (16 >> col)]
                for letter in 'PROMETHEUS LITE']
     bottom = None
-    for pitch_x, pitch_y in ((5.2, 6.6), (4.8, 6.6), (4.4, 6.6), (4, 6.6), (3.6, 6.6), (5.2, 6), (4.8, 6),
-                             (4.4, 6), (5.6, 5.6), (5.2, 5.2), (4.8, 4.8), (4.4, 4.4)):
-        for y in range(8, 31, 2):
-            for anchor in range(480, 500, 2):
+    pitches = (
+        (5.2, 6.6), (4.8, 6.6), (4.4, 6.6), (4, 6.6), (3.6, 6.6),
+        (5.2, 6), (4.8, 6), (4.4, 6), (5.6, 5.6), (5.2, 5.2),
+        (4.8, 4.8), (4.4, 4.4), (3.8, 4), (3.2, 3.6), (2.8, 3.2), (2.6, 2.8),
+    )
+    shifts = sorted(range(-20, 21, 2), key=abs)
+    for pitch_x, pitch_y in pitches:
+        for y in range(6, 57, 2):
+            for anchor in range(494, 430, -4):
                 shapes = []
                 for i, pixels in enumerate(letters):
                     target = anchor + 38.87 * i
                     right_edge = max((r[2] for r in shapes), default=0)
                     glyph = None
-                    for dx in (0, -2, 2, -4, 4, -6, 6, -8, 8, -10, 10, -12, 12, -14, 14, -16, 16):
+                    for dx in shifts:
                         rectangles = draw(pixels, target + dx, y, pitch_x, pitch_y, .42)
-                        if (not rectangles or min(r[0] for r in rectangles) > right_edge + .42) and all(map(clear, rectangles)):
+                        if rectangles and shapes:
+                            gap = min(r[0] for r in rectangles) - right_edge
+                            min_gap, max_gap = (25, 72) if not letters[i - 1] else (.42, 23)
+                            if not min_gap <= gap <= max_gap:
+                                continue
+                        if all(map(clear, rectangles)):
                             glyph = rectangles
                             break
                     if glyph is None:
@@ -98,42 +109,9 @@ def layout(top, assets):
         if bottom:
             break
     if bottom is None:
-        # Try a compact wordmark anywhere in the bottom strip before giving up.
-        for pitch in (4.4, 3.6, 3.0, 2.4, 1.8):
-            pixels = [(i * 6 + dx, dy) for i, glyph in enumerate(letters)
-                      for dx, dy in glyph]
-            width = (max(x for x, _ in pixels) + 1) * pitch
-            for y in range(int(y1) + 6, min(int(y2) - 8, int(y1) + 100), 2):
-                for x in range(int(x2 - width - 6), int(x1) + 5, -4):
-                    shapes = draw(pixels, x, y, pitch, pitch, .42)
-                    if all(map(clear, shapes)):
-                        bottom = [('prometheus_lite_wordmark', shapes)]
-                        break
-                if bottom:
-                    break
-            if bottom:
-                break
-    if bottom is None:
-        print('WARNING: No clear placement for the wordmark; skipping it')
-        bottom = []
+        raise SystemExit('No clear placement for the wordmark')
 
     designs = list(bottom)
-    for _, shapes in designs:
-        for l, b, r, t in shapes:
-            add_obstacle(obstacles, ((l, b), (r, t)), .42)
-    # Place the two bottom icons independently if the original arrangement failed.
-    for idx in (9, 10):
-        name = f'prometheus_art_{idx:02}'
-        if any(n == name for n, _ in designs):
-            continue
-        icon = find_icon(mask[idx], (x1+5, y1+5, x2-5, min(y1+85, y2-5)),
-                         (x1+400, y1+25), clear)
-        if icon is None:
-            print(f'WARNING: No clear placement for artwork {idx:02}; skipping it')
-            continue
-        designs.append((name, icon))
-        add_obstacle(obstacles, ((min(r[0] for r in icon), min(r[1] for r in icon)),
-                                 (max(r[2] for r in icon), max(r[3] for r in icon))), 3)
     for row in range(2):
         for col in range(6):
             idx = TOP_ART[row * 6 + col]
@@ -144,8 +122,7 @@ def layout(top, assets):
             if icon is None:
                 icon = find_icon(mask[idx], (748, 600, 1068, 730), target, clear)
             if icon is None:
-                print(f'WARNING: No clear placement for artwork {idx:02}; skipping it')
-                continue
+                raise SystemExit(f'No clear placement for artwork {idx:02}')
             designs.append((f'prometheus_art_{idx:02}', icon))
             add_obstacle(obstacles, ((min(r[0] for r in icon), min(r[1] for r in icon)),
                                      (max(r[2] for r in icon), max(r[3] for r in icon))), 3)
