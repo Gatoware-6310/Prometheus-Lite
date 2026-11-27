@@ -140,7 +140,7 @@ in no particular order.
 
 ### States
 
-Prometheus Lite currently has **7** states and can fetch an entire instruction in one cycle! Most arithmetic instructions take 4 cycles total.
+Prometheus Lite currently has **6** states and can fetch an entire instruction in one cycle! Arithmetic instructions take 4 cycles total, and instructions including memory operations take 5 cycles total.
 
 - `FETCH`: Reads all 3 bytes of the instruction at once (one from each bank)
 
@@ -148,9 +148,7 @@ Prometheus Lite currently has **7** states and can fetch an entire instruction i
 
 - `EXECUTE`: Enables the control unit and executes the instruction
 
-- `MEMORY`: Completes memory writes requested during `EXECUTE`
-
-- `WRITEBACK`: Where the cpu goes if the control unit leaves the next state alone and there's no memory access
+- `MEMORY`: Completes memory reads and writes requested during `EXECUTE`
 
 - `REGISTER_WRITEBACK`: Writes the result into a register if there is one, and adds 3 to the program counter if we didn't jump
 
