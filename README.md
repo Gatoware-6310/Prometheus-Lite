@@ -235,6 +235,10 @@ Finally, a screenshot of a USB/UART serial interface, running entirely on Promet
 
 ![CPU test results](docs/images/test-results.png)
 
+## Artwork
+I also held a little "mini competition", where people could submit silicon art designs at https://art.gatoware.xyz/, and the best designs were placed on the die.
+I also put a wordmark saying "PROMETHEUS LITE" and my initials on the chip!
+
 ## Time spent
 
 According to Hackatime, I spent around 28 hours in total on this project specifically, 40 minutes of which being AI usage. I must emphasize that I did *not* use AI for generating CPU code - I initially used an AI generated Makefile which I replaced soon after, and the rest of the AI usage is primarily from asking questions to help me learn (NOT copy pasting), or problems with hackatime (I’ve noticed that even leaving something AI related open in the background seems to contribute to the final count, which is odd).
